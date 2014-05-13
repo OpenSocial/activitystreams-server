@@ -1,0 +1,42 @@
+{
+    "name": "ActivityStreamsServer",
+    "version": "0.0.0",
+    "description": "The server to maintain Activity Streams REST API",
+    "main": "server.js",
+    "directories": {
+        "test": "tests"
+    },
+    "scripts": {
+        "test": "jasmine-node ./tests",
+        "start": "node server.js",
+        "startForever": "forever start server.js",
+        "stop": "forever stop 0"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/maksim-marholin/activitystreams-server.git"
+    },
+    "keywords": [
+        "activity",
+        "stream",
+        "activitystream"
+    ],
+    "dependencies": {
+        "body-parser": "1.2.x",
+        "connect-mongo": "0.4.x",
+        "errorhandler": "1.0.x",
+        "express": "4.2.x",
+        "express-namespace": "0.1.x",
+        "forever": "0.11.x",
+        "jade": "1.3.x",
+        "jasmine-node": "1.14.x",
+        "method-override": "1.0.x",
+        "mongoose": "3.8.x",
+        "mongoose-user": "0.0.x",
+        "nconf": "0.6.x",
+        "passport": "0.2.x",
+        "passport-local": "1.0.x",
+        "serve-favicon": "2.0.x",
+        "winston": "0.7.x"
+    }
+}
