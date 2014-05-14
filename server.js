@@ -10,9 +10,6 @@ var express = require('express'),
     // Route map
     routeMap = require('./app/controllers/route-map'),
 
-    // Logger
-    log = require('./libs/log')(module),
-
     // Module to parse JSON in the requests
     bodyParser = require('body-parser'),
 
@@ -47,6 +44,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 routeMap(app);
 
 // Server is listening on configuration port
-app.listen(config.get('port'), function(){
+app.listen(config.get('port'), function() {
     console.log('Express server listening on port '+ config.get('port'));
 });

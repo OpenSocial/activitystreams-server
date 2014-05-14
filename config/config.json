@@ -1,6 +1,6 @@
 {
     "port" : 8080,
-    "mongoose": {
-        "uri": "mongodb://localhost/as_server"
+    "mongodb": {
+        "uri": "mongodb://localhost:27017/as_server"
     }
 }

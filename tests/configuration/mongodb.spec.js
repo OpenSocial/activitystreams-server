@@ -1,14 +1,11 @@
 describe("MongoDB service", function() {
-    it("should connect to database", function(next) {
+    it("should connect to database", function(done) {
         var config = require('../../libs/config'),
-            mongoose = require('mongoose'),
-            db = mongoose.connection;
+            MongoClient = require('mongodb').MongoClient;
 
-        db.once('connected', function() {
-            expect(true).toBe(true);
-            next();
+        MongoClient.connect(config.get('mongodb:uri'), function(err, db) {
+            except(err).toBeNull();
+            done();
         });
-
-        mongoose.connect(config.get('mongoose:uri'));
     });
 });
