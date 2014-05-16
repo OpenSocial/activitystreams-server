@@ -1,10 +1,14 @@
 describe("MongoDB service", function() {
-    it("should connect to database", function(done) {
+
+    /*
+     * @description Test checks if database connection can be established successfully
+     */
+    it("connects to database", function(done) {
         var config = require('../../libs/config'),
             MongoClient = require('mongodb').MongoClient;
 
         MongoClient.connect(config.get('mongodb:uri'), function(err, db) {
-            except(err).toBeNull();
+            expect(err).toBeNull();
             done();
         });
     });

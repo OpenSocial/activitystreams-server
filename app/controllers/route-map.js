@@ -1,35 +1,46 @@
-var activityStreamsController = require("./activity-streams-controller");
+var activityStreamsController = require("./activity-streams-controller"),
+    usersController = require("./users-controller"),
+    viewsController = require("./views-controller");
 
+/*
+ * @description Define the route map
+ */
 var map = {
+    "/": {
+        "get": viewsController.login
+    },
     "/activitystreams": {
+        "get": viewsController.activityStreams,
         "/:userID": {
-            "/:activity": {
-                "post": activityStreamsController.add,
-                "put": activityStreamsController.update
-            },
-            "/:activityID": {
-                "delete": activityStreamsController.remove
-            },
-            "/:groupID": {
-                "/:appID": {
-                    "/:activityID": {
-                        "get": activityStreamsController.getActivities
-                    }
-                }
+            "get": activityStreamsController.getActivities,
+            "post": activityStreamsController.add
+        },
+        "/:activityID": {
+            "delete": activityStreamsController.remove
+        }
+    },
+    "/users": {
+        "get": usersController.getUsers,
+        "/:userName": {
+            "post": usersController.add,
+            "/:followingID": {
+                "post": usersController.addFollowing,
+                "delete": usersController.removeFollowing
             }
         }
     }
 };
 
+/*
+ * @description Function to parse route map into Express router paths
+ */
 var createRoutes = function(routeMap, app, route) {
     route = route || '';
     for (var key in routeMap) {
         switch (typeof routeMap[key]) {
-            // { '/path': { ... }}
             case 'object':
                 createRoutes(routeMap[key], app, route + key);
                 break;
-            // get: function(){ ... }
             case 'function':
                 app[key](route, routeMap[key]);
                 break;
