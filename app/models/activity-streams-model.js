@@ -14,15 +14,13 @@ var DAO = {
     add: function(activity, callback) {
         MongoClient.connect(connectionString, function(connectionError, db) {
             if (connectionError) {
-                console.log("Database connection error: " + connectionError.message);
-                callback(false);
+                callback(new Error("Database connection error: " + connectionError.message), null);
             } else {
                 db.collection("activitystreams").insert(activity, function(insertError, result) {
                     if (insertError) {
-                        console.log("Activity insert error: " + insertError.message);
-                        callback(false);
+                        callback(new Error("Activity insert error: " + insertError.message), null);
                     } else {
-                        callback(true, result[0]._id);
+                        callback(null, result[0]._id);
                     }
                     db.close();
                 });
@@ -37,15 +35,13 @@ var DAO = {
     remove: function(activityID, callback) {
         MongoClient.connect(connectionString, function(connectionError, db) {
             if (connectionError) {
-                console.log("Database connection error: " + connectionError.message);
-                callback(false);
+                callback(new Error("Database connection error: " + connectionError.message), null);
             } else {
                 db.collection("activitystreams").remove({_id: activityID}, function(removeError, result) {
                     if (removeError) {
-                        console.log("Activity remove error: " + removeError.message);
-                        callback(false);
+                        callback(new Error("Activity remove error: " + removeError.message), null);
                     } else {
-                        callback(true);
+                        callback(null, true);
                     }
                     db.close();
                 });
@@ -56,28 +52,31 @@ var DAO = {
     /*
      * @description Get the activities list
      * @param userID User to get activities for
-     * @param offset The starting index to get data from (paging purposes)
-     * @param count Number of documents to get (paging purposes)
+     * @param offset The starting index to get data from (paging purposes). Default: 0
+     * @param count Number of documents to get (paging purposes). Default: @all
      */
     getActivities: function(userID, offset, count, callback) {
         MongoClient.connect(connectionString, function(connectionError, db) {
             if (connectionError) {
-                console.log("Database connection error: " + connectionError.message);
-                callback(false);
+                callback(new Error("Database connection error: " + connectionError.message), null);
             } else {
+                offset = offset ? offset : 0;
+                count = count ? count : "@all";
+                var options = {};
+                if (count !== "@all") {
+                    options.skip = offset;
+                    options.limit = count;
+                }
+
                 db.collection("activitystreams").find(
                     {
                         actor: userID
                     },
-                    {
-                        skip: offset,
-                        limit: count
-                    }).toArray(function(getError, result) {
+                    options).toArray(function(getError, result) {
                         if (getError) {
-                            console.log("Activities retrieving error: " + getError.message);
-                            callback(false);
+                            callback(new Error("Activities retrieving error: " + getError.message), null);
                         } else {
-                            callback(true, result);
+                            callback(null, result);
                         }
                         db.close();
                     }
@@ -93,8 +92,7 @@ var DAO = {
     getActivitiesCount: function(userID, callback) {
         MongoClient.connect(connectionString, function(connectionError, db) {
             if (connectionError) {
-                console.log("Database connection error: " + connectionError.message);
-                callback(false);
+                callback(new Error("Database connection error: " + connectionError.message), null);
             } else {
                 db.collection("activitystreams").count(
                     {
@@ -102,10 +100,9 @@ var DAO = {
                     },
                     function(getError, result) {
                         if (getError) {
-                            console.log("Activities count retrieving error: " + getError.message);
-                            callback(false);
+                            callback(new Error("Activities count retrieving error: " + getError.message), null);
                         } else {
-                            callback(true, result);
+                            callback(null, result);
                         }
                         db.close();
                     }

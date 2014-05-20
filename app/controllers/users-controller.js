@@ -2,64 +2,91 @@ var usersModel = require("../models/users-model");
 
 var user = {
     /*
-     * @description REST method (HTTP POST /users/:userName)
+     * @description REST method (HTTP POST /users/:user)
      *              to add the new user
      */
     add: function(req, res) {
-        var userName = req.userName ? req.userName : "Guest user",
+        var userName = req.params.user ? req.params.user : "Guest user",
             user = {
                 "name": userName,
                 "followings": [],
                 "followers": []
-            },
-            result = usersModel.add(user);
-        if (result.result) {
-            res.send(
-                {
-                    "userID": result.data,
-                    "success": "User has been successfully added!"
+            };
+
+        usersModel.add(user, function(err, results) {
+            if (!err) {
+                res.send(
+                    {
+                        "userID": results,
+                        "success": "User has been successfully added!"
+                    });
+            } else {
+                res.send({
+                    "error": "User has not been successfully added!"
                 });
-        } else {
-            res.send({
-                "error": "User has not been successfully added!"
-            });
-        }
+            }
+        });
     },
 
     /*
-     * @description REST method (HTTP POST /users/:userID/:followingID) to add new following
+     * @description REST method (HTTP POST /users/:user/followings/:followingID) to add new following
      */
     addFollowing: function(req, res) {
-        var userID = req.userID,
-            followingID = req.followingID,
-            result = usersModel.addFollowing(userID, followingID);
-        if (result) {
-            res.send({
-                "success": "Following has been successfully added!"
-            });
-        } else {
-            res.send({
-                "error": "Following has not been successfully added!"
-            });
-        }
+        var userID = req.params.user,
+            followingID = req.params.followingID;
+        usersModel.addFollowing(userID, followingID, function(err, results) {
+            if (!err) {
+                res.send({
+                    "success": "Following has been successfully added!"
+                });
+            } else {
+                res.send({
+                    "error": "Following has not been successfully added!"
+                });
+            }
+        });
     },
 
     /*
-     * @description REST method (HTTP DELETE /users/:userID/:followingID) to remove following
+     * @description REST method (HTTP GET /users/:user/followings) to get the followings
+     */
+    getFollowings: function(req, res) {
+        var userID = req.params.user,
+            offset = req.body.offset,
+            count = req.body.count;
+
+        usersModel.getFollowings(userID, offset, count, function(err, results) {
+            if (!err) {
+                res.send({
+                    "totalItems": results.totalItems,
+                    "followings": res.json(results.followings),
+                    "success": "Following has been successfully removed!"
+                });
+            } else {
+                res.send({
+                    "error": "Following has not been successfully removed!"
+                });
+            }
+        });
+    },
+
+    /*
+     * @description REST method (HTTP DELETE /users/:user/followings/:followingID) to remove following
      */
     removeFollowing: function(req, res) {
-        var userID = req.userID,
-            followingID = req.followingID,
-            result = usersModel.removeFollowing(userID, followingID);
-        if (result) {
-            res.send({
-                "success": "Following has been successfully removed!"
-            });
-        } else {
-            res.send({
-                "error": "Following has not been successfully removed!"
-            });
-        }
+        var userID = req.params.user,
+            followingID = req.params.followingID;
+        usersModel.removeFollowing(userID, followingID, function(err, results) {
+            if (!err) {
+                res.send({
+                    "success": "Following has been successfully removed!"
+                });
+            } else {
+                res.send({
+                    "error": "Following has not been successfully removed!"
+                });
+            }
+        });
     },
 
     /*
@@ -67,25 +94,50 @@ var user = {
      */
     getUsers: function(req, res) {
         var offset = req.body.offset,
-            count = req.body.count,
-            result = usersModel.getUsers(offset, count),
-            totalItems = usersModel.getUsersCount(),
-            dataToReturn = {};
-        if (result.result) {
-            dataToReturn["totalItems"] = totalItems;
-            dataToReturn["items"] = result.data;
-        }
+            count = req.body.count;
 
-        if (result.result) {
-            res.send({
-                "success": "Users list has been successfully retrieved!",
-                "data": res.json(dataToReturn)
-            });
-        } else {
-            res.send({
-                "error": "Users list has not been successfully retrieved!"
-            });
-        }
+        usersModel.getUsers(offset, count, function(err, users) {
+            if (!err) {
+                usersModel.getUsersCount(function(countErr, countUsers) {
+                    if (!countErr) {
+                        res.send({
+                            "success": "Users list has been successfully retrieved!",
+                            "data": res.json({
+                                "totalItems": countUsers,
+                                "items": users
+                            })
+                        });
+                    } else {
+                        res.send({
+                            "error": "Users list has not been successfully retrieved!"
+                        });
+                    }
+                });
+            } else {
+                res.send({
+                    "error": "Users list has not been successfully retrieved!"
+                });
+            }
+
+        });
+    },
+
+    /*
+     * @description REST method (HTTP DELETE /users/:user) to remove user
+     */
+    removeUser: function(req, res) {
+        var userID = req.params.user;
+        usersModel.removeUser(userID, function(err, results) {
+            if (!err) {
+                res.send({
+                    "success": "User has been successfully removed!"
+                });
+            } else {
+                res.send({
+                    "error": "User has not been successfully removed!"
+                });
+            }
+        });
     }
 };
 

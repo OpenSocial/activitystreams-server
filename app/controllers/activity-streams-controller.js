@@ -7,7 +7,7 @@ var activityStream = {
      * @see http://opensocial.github.io/spec/2.5.1/Social-API-Server.xml#ActivityStreams-Service-Create
      */
     add: function(req, res) {
-        var userID = req.userID ? req.userID : "@me",
+        var userID = req.params.userID ? req.params.userID : "@me",
             verb = req.body.verb,
             published = req.body.published,
             object = req.body.object,
@@ -18,11 +18,11 @@ var activityStream = {
                 object: object
             };
 
-        activityStreamsModel.add(activity, function(result, data) {
-            if (result) {
+        activityStreamsModel.add(activity, function(err, results) {
+            if (!err) {
                 res.send(
                     {
-                        "activityID": data,
+                        "activityID": results,
                         "success": "Activity has been successfully added!"
                     });
             } else {
@@ -39,10 +39,10 @@ var activityStream = {
      * @see http://opensocial.github.io/spec/2.5.1/Social-API-Server.xml#ActivityStreams-Service-Delete
      */
     remove: function(req, res) {
-        var activityID = req.activityID;
+        var activityID = req.params.activityID;
 
-        activityStreamsModel.remove(activityID, function(result) {
-            if (result) {
+        activityStreamsModel.remove(activityID, function(err, results) {
+            if (!err) {
                 res.send({
                     "success": "Activity has been successfully removed!"
                 });
@@ -60,17 +60,17 @@ var activityStream = {
      * @see http://opensocial.github.io/spec/2.5.1/Social-API-Server.xml#ActivityStreams-Service-GetActivityStreams
      */
     getActivities: function(req, res) {
-        var userID = req.userID ? req.userID : "@me",
+        var userID = req.params.userID ? req.params.userID : "@me",
             offset = req.body.offset,
             count = req.body.count;
 
-        activityStreamsModel.getActivities(userID, offset, count, function(result, data) {
-           if (result) {
-               activityStreamsModel.getActivitiesCount(userID, function(countResult, totalItems) {
-                   if (countResult) {
+        activityStreamsModel.getActivities(userID, offset, count, function(err, activities) {
+           if (!err) {
+               activityStreamsModel.getActivitiesCount(userID, function(countErr, totalItems) {
+                   if (!countErr) {
                        res.send({
                            "success": "Activity list has been successfully retrieved!",
-                           "data": res.json({"totalItems": totalItems, "data": data})
+                           "data": res.json({"totalItems": totalItems, "items": activities})
                        });
                    } else {
                        res.send({

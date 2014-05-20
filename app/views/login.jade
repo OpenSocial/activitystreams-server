@@ -2,15 +2,31 @@ extends layouts/default
 
 block content
     .container
-        .page-header
-            h1= welcomeMessage
-            p
-                a.btn.btn-primary.btn-lg(href="/activitystreams") Login as User 1
-            p
-                a.btn.btn-primary.btn-lg(href="/activitystreams") Login as User 2
-            p
-                a.btn.btn-primary.btn-lg(href="/activitystreams") Login as User 3
-            p
-                a.btn.btn-primary.btn-lg(href="/activitystreams") Login as User 4
-            p
-                a.btn.btn-primary.btn-lg(href="/activitystreams") Login as User 5
+        .panel.panel-success
+            .panel-heading
+                h1.panel-title= welcomeMessage
+            .panel-body
+                .alert.alert-danger.alert-dismissable.hidden
+                    span#errorInfo
+                form.form-inline(role="form")
+                    .form-group
+                        label.sr-only(for="userName") Username
+                        .input-group.input-group-lg
+                            span.input-group-addon
+                                span.glyphicon.glyphicon-user
+                            input.form-control#username(type="text", placeholder="First name, last name", size="50")
+                            span.input-group-btn
+                                button#play.btn.btn-primary Play
+            if users.length > 0
+                .panel-heading
+                    h1.panel-title or choose one of the users already played!
+            .panel-body
+                each val, index in users
+                    - var path = "/activitystreams/" + val._id
+                    if index % 6 === 0
+                        if index !== 0
+                            | </div><br>
+                        | <div class="row">
+                    .col-md-2
+                        a.btn.btn-success(href=path)= val.name
+                | </div>

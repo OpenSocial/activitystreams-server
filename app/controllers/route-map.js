@@ -10,9 +10,8 @@ var map = {
         "get": viewsController.login
     },
     "/activitystreams": {
-        "get": viewsController.activityStreams,
         "/:userID": {
-            "get": activityStreamsController.getActivities,
+            "get": viewsController.activityStreams,
             "post": activityStreamsController.add
         },
         "/:activityID": {
@@ -21,14 +20,33 @@ var map = {
     },
     "/users": {
         "get": usersController.getUsers,
-        "/:userName": {
+        "/:user": {
             "post": usersController.add,
-            "/:followingID": {
-                "post": usersController.addFollowing,
-                "delete": usersController.removeFollowing
+            "delete": usersController.removeUser,
+            "/followings": {
+                "get": usersController.getFollowings,
+                "/:followingID": {
+                    "post": usersController.addFollowing,
+                    "delete": usersController.removeFollowing
+                }
             }
         }
     }
+};
+
+/*
+ * @description Set error handlers
+ */
+var errorHandlers = function(app) {
+    // Handle 404
+    app.use(function(req, res) {
+        viewsController.error404(req, res);
+    });
+
+    // Handle 500
+    app.use(function(error, req, res, next) {
+        viewsController.error500(req, res, error);
+    });
 };
 
 /*
@@ -50,6 +68,7 @@ var createRoutes = function(routeMap, app, route) {
 
 var generateRouteMap = function(app) {
     createRoutes(map, app);
+    errorHandlers(app);
 };
 
 module.exports = generateRouteMap;
