@@ -1,3 +1,23 @@
+//- BEGIN of Mixins
+mixin renderUsers(startIndex, endIndex)
+    - for (var i = startIndex; i < endIndex; i++) {
+        - var userHref = "/activitystreams/" + users[i]._id
+        - if (i % usersPerLine === 0) {
+            - if (i !== startIndex) {
+                | </div>
+            - }
+            - if (i !== 0) {
+                | <br>
+            - }
+            | <div class="row">
+        - }
+        .col-md-2
+            a.btn.btn-success(href=userHref)= users[i].name
+    - }
+    | </div>
+
+//- END of Mixing
+
 extends layouts/default
 
 block content
@@ -21,12 +41,26 @@ block content
                 .panel-heading
                     h1.panel-title or choose one of the users already played!
             .panel-body
-                each val, index in users
-                    - var path = "/activitystreams/" + val._id
-                    if index % 6 === 0
-                        if index !== 0
-                            | </div><br>
-                        | <div class="row">
-                    .col-md-2
-                        a.btn.btn-success(href=path)= val.name
-                | </div>
+
+                //- Calculate records to show/hide
+                - var endIndex = users.length <= usersToShow ? users.length : usersToShow
+                - var addHidden = users.length > usersToShow
+
+                //- Show {usersToShow} first records as a rows
+                +renderUsers(0, endIndex)
+
+                //- Render hidden items
+                - if (addHidden) {
+                    | <div class="hidden" id="hiddenUsers">
+                    +renderUsers(endIndex, users.length)
+                    | </div>
+                - }
+
+                //- "Show all" button
+                br
+                .row
+                    .col-md-offset-5.col-md-2
+                        button#showAll.btn.btn-info.btn-xs.center-block Show all
+
+block custom-scripts
+    script(src=path + "/javascripts/login.js")
