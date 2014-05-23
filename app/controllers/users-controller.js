@@ -22,7 +22,7 @@ var user = {
                     });
             } else {
                 res.send({
-                    "error": "User has not been successfully added!"
+                    "error": err.message
                 });
             }
         });
@@ -41,7 +41,7 @@ var user = {
                 });
             } else {
                 res.send({
-                    "error": "Following has not been successfully added!"
+                    "error": err.message
                 });
             }
         });
@@ -64,7 +64,7 @@ var user = {
                 });
             } else {
                 res.send({
-                    "error": "Following has not been successfully removed!"
+                    "error": err.message
                 });
             }
         });
@@ -83,7 +83,7 @@ var user = {
                 });
             } else {
                 res.send({
-                    "error": "Following has not been successfully removed!"
+                    "error": err.message
                 });
             }
         });
@@ -109,13 +109,13 @@ var user = {
                         });
                     } else {
                         res.send({
-                            "error": "Users list has not been successfully retrieved!"
+                            "error": err.message
                         });
                     }
                 });
             } else {
                 res.send({
-                    "error": "Users list has not been successfully retrieved!"
+                    "error": err.message
                 });
             }
 
@@ -134,7 +134,7 @@ var user = {
                 });
             } else {
                 res.send({
-                    "error": "User has not been successfully removed!"
+                    "error": err.message
                 });
             }
         });

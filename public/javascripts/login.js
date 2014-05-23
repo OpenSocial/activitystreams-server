@@ -24,7 +24,8 @@
 
     $(document).ready(function() {
         var hiddenUsers = $("#hiddenUsers"),
-            showAll = $("#showAll");
+            showAll = $("#showAll"),
+            showAllHtml = showAll.html();
 
         $("#play").click(function() {
             user.create();
@@ -36,9 +37,9 @@
 
         showAll.click(function() {
             if (hiddenUsers.hasClass("hidden")) {
-                showAll.text("Hide");
+                showAll.html("Hide");
             } else {
-                showAll.text("Show all");
+                showAll.html(showAllHtml);
             }
             hiddenUsers.toggleClass("hidden");
         });

@@ -34,7 +34,7 @@ var viewsRenderer = {
      * @description Login page renderer
      */
     login: function(req, res) {
-        usersModel.getUsers(0, 100, function(err, results) {
+        usersModel.getUsers(0, "@all", function(err, results) {
             if (!err) {
                 res.render("../views/login",
                     {
@@ -46,7 +46,11 @@ var viewsRenderer = {
                     }
                 );
             } else {
-                // TODO: render error page
+                res.render("../views/error",
+                    {
+                        error: err.message
+                    }
+                );
             }
         });
     },
@@ -55,12 +59,40 @@ var viewsRenderer = {
      * @description Main page renderer
      */
     activityStreams: function(req, res) {
-        res.render("../views/activity-streams",
-            {
-                path: req.protocol + "://" + req.host + ":" + port,
-                welcomeMessage: "Welcome to our playground!"
+        usersModel.getUsers(0, "@all", function(err, results) {
+            if (!err) {
+                usersModel.getUser(req.params.userID, function(innerError, user) {
+                    if (!innerError) {
+                        // Delete the logged user from the result array
+                        for (var i = 0; i < results.length; i++) {
+                            if (String(results[i]._id) === String(user._id)) {
+                                results.splice(i, 1);
+                            }
+                        }
+
+                        res.render("../views/activity-streams",
+                            {
+                                users: results,
+                                path: req.protocol + "://" + req.host + ":" + port,
+                                loggedUser: user
+                            }
+                        );
+                    } else {
+                        res.render("../views/error",
+                            {
+                                error: innerError.message
+                            }
+                        );
+                    }
+                });
+            } else {
+                res.render("../views/error",
+                    {
+                        error: err.message
+                    }
+                );
             }
-        );
+        });
     }
 };
 

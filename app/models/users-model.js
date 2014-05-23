@@ -4,7 +4,8 @@
 
 var MongoClient = require('mongodb').MongoClient,
     config = require('../../libs/config'),
-    connectionString = config.get('mongodb:uri');
+    connectionString = config.get('mongodb:uri'),
+    ObjectID = require('mongodb').ObjectID;
 
 var DAO = {
     /*
@@ -14,7 +15,7 @@ var DAO = {
     add: function(user, callback) {
         MongoClient.connect(connectionString, function(connectionError, db) {
             if (connectionError) {
-                callback(new Error("Database connection error: " + connectionError.message), null);
+                callback(new Error("Database connection error"), null);
             } else {
                 db.collection("users").findOne(
                     {
@@ -22,11 +23,11 @@ var DAO = {
                     },
                     function(searchError, result) {
                         if (result) {
-                            callback(new Error("User " + user.name + " already exists."), null);
+                            callback(new Error("User " + user.name + " already exists"), null);
                         } else {
                             db.collection("users").insert(user, function(insertError, user) {
                                 if (insertError) {
-                                    callback(new Error("User insert error: " + insertError.message), null);
+                                    callback(new Error("User insert error"), null);
                                 } else {
                                     callback(null, user[0]._id);
                                 }
@@ -47,30 +48,30 @@ var DAO = {
     addFollowing: function(userID, followingID, callback) {
         MongoClient.connect(connectionString, function(connectionError, db) {
             if (connectionError) {
-                callback(new Error("Database connection error: " + connectionError.message), null);
+                callback(new Error("Database connection error"), null);
             } else {
                 // Find the user to add following to
                db.collection("users").update(
                     {
-                        _id: userID
+                        _id: new ObjectID(userID)
                     },
                     {
                         $addToSet: {followings: followingID}
                     },
                     function(followingsUpdateError) {
                         if (followingsUpdateError) {
-                            callback(new Error("Followings update error: " + followingsUpdateError.message), null);
+                            callback(new Error("Followings update error"), null);
                         } else {
                             db.collection("users").update(
                                 {
-                                    _id: followingID
+                                    _id: new ObjectID(followingID)
                                 },
                                 {
                                     $addToSet: {followers: userID}
                                 },
                                 function(followersUpdateError) {
                                     if (followersUpdateError) {
-                                        callback(new Error("Followers update error: " + followersUpdateError.message), null);
+                                        callback(new Error("Followers update error"), null);
                                     } else {
                                         callback(null, true);
                                     }
@@ -92,32 +93,31 @@ var DAO = {
     removeFollowing: function(userID, followingID, callback) {
         MongoClient.connect(connectionString, function(connectionError, db) {
             if (connectionError) {
-                console.log("Database connection error: " + connectionError.message);
-                callback(new Error("Database connection error: " + connectionError.message), null);
+                callback(new Error("Database connection error"), null);
             } else {
                 // Find the user to remove following from
                 db.collection("users").update(
                     {
-                        _id: userID
+                        _id: new ObjectID(userID)
                     },
                     {
                         $pull: {followings: followingID}
                     },
                     function(followingsRemoveError) {
                         if (followingsRemoveError) {
-                            callback(new Error("Following remove error: " + followingsRemoveError.message), null);
+                            callback(new Error("Following remove error"), null);
                         } else {
                             // Find the user to remove follower from
                             db.collection("users").update(
                                 {
-                                    _id: followingID
+                                    _id: new ObjectID(followingID)
                                 },
                                 {
                                     $pull: {followers: userID}
                                 },
                                 function(followersUpdateError) {
                                     if (followersUpdateError) {
-                                        callback(new Error("Follower remove error: " + followersUpdateError.message), null);
+                                        callback(new Error("Follower remove error"), null);
                                     } else {
                                         callback(null, true);
                                     }
@@ -140,22 +140,26 @@ var DAO = {
     getFollowings: function(userID, offset, count, callback) {
         MongoClient.connect(connectionString, function(connectionError, db) {
             if (connectionError) {
-                callback(new Error("Database connection error: " + connectionError.message), null);
+                callback(new Error("Database connection error"), null);
             } else {
                 offset = offset ? offset : 0;
                 count = count ? count : "@all";
 
                 db.collection("users").findOne(
                     {
-                        _id: userID
+                        _id: new ObjectID(userID)
                     },
                     function(getError, result) {
                         if (getError) {
-                            callback(new Error("Followings retrieving error: " + getError.message), null);
+                            callback(new Error("Followings retrieving error"), null);
                         } else {
                             var followingsToReturn = [];
-                            for (var i = offset; i < offset + count; i++) {
-                                followingsToReturn.push(result.followings[i]);
+                            if (count === "@all") {
+                                followingsToReturn = result.followings;
+                            } else {
+                                for (var i = offset; i < offset + count; i++) {
+                                    followingsToReturn.push(result.followings[i]);
+                                }
                             }
 
                             callback(null, {followings: followingsToReturn, totalItems: result.followings.length});
@@ -168,23 +172,53 @@ var DAO = {
     },
 
     /*
+     * @description Get the user information by ID
+     * @param userID The ID to search user by
+     */
+    getUser: function(userID, callback) {
+        MongoClient.connect(connectionString, function(connectionError, db) {
+            if (connectionError) {
+                callback(new Error("Database connection error"), null);
+            } else {
+                db.collection("users").findOne(
+                    {
+                        _id: new ObjectID(userID)
+                    },
+                    function(getError, result) {
+                        if (getError) {
+                            callback(new Error("Users retrieving error"), null);
+                        } else {
+                            callback(null, result);
+                        }
+                        db.close();
+                    }
+                );
+            }
+        });
+    },
+
+    /*
      * @description Get the users list
      * @param offset The starting index to get data from (paging purposes)
-     * @param count Number of documents to get (paging purposes)
+     * @param count Number of documents to get (paging purposes). Specail value: "@all" to get all the users
      */
     getUsers: function(offset, count, callback) {
         MongoClient.connect(connectionString, function(connectionError, db) {
             if (connectionError) {
-                callback(new Error("Database connection error: " + connectionError.message), null);
+                callback(new Error("Database connection error"), null);
             } else {
-                db.collection("users").find(
-                    {},
-                    {
-                        skip: offset,
-                        limit: count
-                    }).toArray(function(getError, result) {
+                var options = {
+                    sort: [["name", 1]]
+                };
+                if (count !== "@all") {
+                    options.skip = offset;
+                    options.limit = count;
+                }
+
+                db.collection("users").find({}, options).toArray(
+                    function(getError, result) {
                         if (getError) {
-                            callback(new Error("Users retrieving error: " + getError.message), null);
+                            callback(new Error("Users retrieving error"), null);
                         } else {
                             callback(null, result);
                         }
@@ -201,13 +235,13 @@ var DAO = {
     getUsersCount: function(callback) {
         MongoClient.connect(connectionString, function(connectionError, db) {
             if (connectionError) {
-                callback(new Error("Database connection error: " + connectionError.message), null);
+                callback(new Error("Database connection error"), null);
             } else {
                 db.collection("users").count(
                     {},
                     function(getError, result) {
                         if (getError) {
-                            callback(new Error("Users count retrieving error: " + getError.message), null);
+                            callback(new Error("Users count retrieving error"), null);
                         } else {
                             callback(null, result);
                         }
@@ -225,16 +259,16 @@ var DAO = {
     removeUser: function(userID, callback) {
         MongoClient.connect(connectionString, function(connectionError, db) {
             if (connectionError) {
-                callback(new Error("Database connection error: " + connectionError.message), null);
+                callback(new Error("Database connection error"), null);
             } else {
                 // Find the user to remove
                 db.collection("users").remove(
                     {
-                        _id: userID
+                        _id: new ObjectID(userID)
                     },
                     function(userRemoveError) {
                         if (userRemoveError) {
-                            callback(new Error("User remove error: " + userRemoveError.message), null);
+                            callback(new Error("User remove error"), null);
                         } else {
                             callback(null, true);
                         }

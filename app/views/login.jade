@@ -26,7 +26,7 @@ block content
             .panel-heading
                 h1.panel-title= welcomeMessage
             .panel-body
-                .alert.alert-danger.alert-dismissable.hidden
+                .alert.alert-danger.hidden
                     span#errorInfo
                 form.form-inline(role="form")
                     .form-group
@@ -60,7 +60,8 @@ block content
                 br
                 .row
                     .col-md-offset-5.col-md-2
-                        button#showAll.btn.btn-info.btn-xs.center-block Show all
+                        button#showAll.btn.btn-info.btn-xs.center-block Show all&nbsp;
+                            span.badge= users.length - endIndex
 
 block custom-scripts
     script(src=path + "/javascripts/login.js")

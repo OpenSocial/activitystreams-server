@@ -2,5 +2,100 @@ extends layouts/default
 
 block content
     .container
-        .page-header
-            h1= welcomeMessage
+        .row
+            .col-md-3
+                .panel.panel-success
+                    .modal.fade#nameDialog(tabindex="-1", role="dialog", aria-labelledby="nameDialogLabel", aria-hidden="true")
+                        .modal-dialog
+                            .modal-content
+                                .modal-header
+                                    button.close(type="button", data-dismiss="modal", aria-hidden="true") &times;
+                                    h4.modal-title#nameDialogLabel Please, enter the name of the&nbsp;
+                                        span#objectType
+                                .modal-body
+                                    .alert.alert-danger.hidden
+                                        span#nameDialogErrorArea
+                                    form.form-inline(role="form")
+                                        .form-group
+                                            label.sr-only(for="objectName") Object name
+                                            .input-group.input-group-md
+                                                span.input-group-addon
+                                                    span#objectImage.glyphicon
+                                                input.form-control#objectName(type="text", placeholder="Name", size="50")
+                                .modal-footer
+                                    button.btn.btn-default(type="button", data-dismiss="modal") Close
+                                    button#addActivity.btn.btn-primary(type="button") Add
+                    .panel-heading
+                       h1.panel-title Actions
+                    .panel-body
+                        .alert.alert-danger.hidden
+                            span#actionsErrorArea
+                        .row
+                            .col-md-12
+                                button#postPhoto.btn.btn-success.btn-lg
+                                    span.glyphicon.glyphicon-picture
+                                    span &nbsp;Post a photo
+                        br
+                        .row
+                            .col-md-12
+                                button#postVideo.btn.btn-success.btn-lg
+                                    span.glyphicon.glyphicon-facetime-video
+                                    span &nbsp;Post a video
+                        br
+                        .row
+                            .col-md-12
+                                button#postNote.btn.btn-success.btn-lg
+                                    span.glyphicon.glyphicon-edit
+                                    span &nbsp;Post a note
+                        br
+                        .row
+                            .col-md-12
+                                button#recommendPlace.btn.btn-success.btn-lg
+                                    span.glyphicon.glyphicon-map-marker
+                                    span &nbsp;Recommend a place
+                        br
+                        .row
+                            .col-md-12
+                                button#postAudio.btn.btn-success.btn-lg
+                                    span.glyphicon.glyphicon-music
+                                    span &nbsp;Post an audio
+                        br
+                        .row
+                            .col-md-12
+                                button#addLike.btn.btn-success.btn-lg
+                                    span.glyphicon.glyphicon-heart
+                                    span &nbsp;Add like
+            .col-md-6
+                .panel.panel-primary
+                    .panel-heading
+                        h1.panel-title Activity streams
+                    .panel-body
+            .col-md-3
+                .panel.panel-success
+                    .panel-heading
+                        h1.panel-title Users
+                    .panel-body
+                        .alert.alert-danger.hidden
+                            span#followingsErrorArea
+                        table.table.table-hover
+                            tbody
+                                each val, index in users
+                                    if loggedUser.followings.indexOf(String(val._id)) >= 0
+                                        tr.success(id="followingRow" + index)
+                                            td!= "<strong>" + val.name + "</strong>"
+                                            td
+                                                button.btn.btn-primary.btn-sm(id="follow" + index, title="Unfollow")
+                                                    input(type="hidden", id="followingID" + index, value=val._id)
+                                                    input(type="hidden", id="isFollowed"+ index, value="true")
+                                                    span.glyphicon.glyphicon-minus
+                                    else
+                                        tr.info(id="followingRow" + index)
+                                            td!= "<strong>" + val.name + "</strong>"
+                                            td
+                                                button.btn.btn-primary.btn-sm(id="follow" + index, title="Follow")
+                                                    input(type="hidden", id="followingID" + index, value=val._id)
+                                                    input(type="hidden", id="isFollowed" + index, value="false")
+                                                    span.glyphicon.glyphicon-plus
+
+block custom-scripts
+    script(src=path + "/javascripts/activity-streams.js")

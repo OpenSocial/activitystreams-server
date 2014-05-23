@@ -1,9 +1,14 @@
 describe("Users model (DAO)", function() {
     var usersModel = require("../../app/models/users-model"),
         userID,
-        followingID = "12398sdkjf2Es",
+        followingID,
         user = {
             name: "John Doe",
+            followings: [],
+            followers: []
+        },
+        anotherUser = {
+            name: "John Doe 2",
             followings: [],
             followers: []
         };
@@ -12,7 +17,10 @@ describe("Users model (DAO)", function() {
         usersModel.add(user, function(err, data) {
             expect(err).toBeNull();
             userID = data;
-            done();
+            usersModel.add(anotherUser, function(innerErr, innerData) {
+                followingID = innerData;
+                done();
+            });
         });
     });
 
@@ -46,11 +54,24 @@ describe("Users model (DAO)", function() {
         });
     });
 
+    it("retrieves user by ID from the database", function(done) {
+        //console.log(userID);
+        usersModel.getUser(userID, function(err, result) {
+            expect(err).toBeNull();
+            //console.log(userID == result._id);
+            //console.log(userID === result._id);
+            expect(result).not.toBeNull();
+            done();
+        });
+    });
+
     it("retrieves users from the database", function(done) {
         usersModel.getUsers(0, 1, function(err, users) {
             expect(err).toBeNull();
-            expect(users.length).toBeGreaterThan(0);
-            expect(users[0]._id).toEqual(userID);
+            done();
+        });
+        usersModel.getUsers(0, "@all", function(err, users) {
+            expect(err).toBeNull();
             done();
         });
     });
@@ -58,7 +79,9 @@ describe("Users model (DAO)", function() {
     it("removes user from the database", function(done) {
         usersModel.removeUser(userID, function(err, results) {
             expect(err).toBeNull();
-            done();
+            usersModel.removeUser(followingID, function(innerErr, innerResults) {
+                done();
+            });
         });
     });
 });

@@ -9,21 +9,25 @@ html
         meta(name="viewport", content="width=device-width, initial-scale=1")
         title Welcome to the Activity Stream Server Sandbox!
         link(rel="stylesheet", href=path + "/assets/bootstrap/css/bootstrap.min.css")
-        link(rel="stylesheet", href=path + "/stylesheets/app.css")
         // HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries
         +ie("if lt IE 9", "<script src='https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js'></script>")
         +ie("if lt IE 9", "<script src='https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js'></script>")
+        link(rel="stylesheet", href=path + "/stylesheets/app.css")
+        block custom-stylesheets
     body
         .navbar.navbar-inverse.navbar-fixed-top(role="navigation")
             .container
                 .navbar-header
                     a.navbar-brand(href="/") Activity Streams Server Sandbox
+                if loggedUser
+                    input(type="hidden", id="loggedUserID", value=loggedUser._id)
+                    p.navbar-text.navbar-right!= "Welcome, " + "<strong>" + loggedUser.name + "</strong>"
 
         block content
 
         #footer
             .container
-                p.text-muted Copyright (&copy;) 2013 International Business Machines & OpenSocial Foundation
+                p.text-muted Copyright (&copy;) 2014 International Business Machines & OpenSocial Foundation
 
         script(src=path + "/assets/jquery/js/jquery.min.js")
         script(src=path + "/assets/bootstrap/js/bootstrap.min.js")

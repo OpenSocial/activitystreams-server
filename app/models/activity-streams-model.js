@@ -4,7 +4,8 @@
 
 var MongoClient = require('mongodb').MongoClient,
     config = require('../../libs/config'),
-    connectionString = config.get('mongodb:uri');
+    connectionString = config.get('mongodb:uri'),
+    ObjectID = require('mongodb').ObjectID;
 
 var DAO = {
     /*
@@ -14,11 +15,11 @@ var DAO = {
     add: function(activity, callback) {
         MongoClient.connect(connectionString, function(connectionError, db) {
             if (connectionError) {
-                callback(new Error("Database connection error: " + connectionError.message), null);
+                callback(new Error("Database connection error"), null);
             } else {
                 db.collection("activitystreams").insert(activity, function(insertError, result) {
                     if (insertError) {
-                        callback(new Error("Activity insert error: " + insertError.message), null);
+                        callback(new Error("Activity insert error"), null);
                     } else {
                         callback(null, result[0]._id);
                     }
@@ -35,16 +36,21 @@ var DAO = {
     remove: function(activityID, callback) {
         MongoClient.connect(connectionString, function(connectionError, db) {
             if (connectionError) {
-                callback(new Error("Database connection error: " + connectionError.message), null);
+                callback(new Error("Database connection error"), null);
             } else {
-                db.collection("activitystreams").remove({_id: activityID}, function(removeError, result) {
-                    if (removeError) {
-                        callback(new Error("Activity remove error: " + removeError.message), null);
-                    } else {
-                        callback(null, true);
+                db.collection("activitystreams").remove(
+                    {
+                        _id: new ObjectID(activityID)
+                    },
+                    function(removeError, result) {
+                        if (removeError) {
+                            callback(new Error("Activity remove error"), null);
+                        } else {
+                            callback(null, true);
+                        }
+                        db.close();
                     }
-                    db.close();
-                });
+                );
             }
         });
     },
@@ -58,7 +64,7 @@ var DAO = {
     getActivities: function(userID, offset, count, callback) {
         MongoClient.connect(connectionString, function(connectionError, db) {
             if (connectionError) {
-                callback(new Error("Database connection error: " + connectionError.message), null);
+                callback(new Error("Database connection error"), null);
             } else {
                 offset = offset ? offset : 0;
                 count = count ? count : "@all";
@@ -70,11 +76,11 @@ var DAO = {
 
                 db.collection("activitystreams").find(
                     {
-                        actor: userID
+                        actor: new ObjectID(userID)
                     },
                     options).toArray(function(getError, result) {
                         if (getError) {
-                            callback(new Error("Activities retrieving error: " + getError.message), null);
+                            callback(new Error("Activities retrieving error"), null);
                         } else {
                             callback(null, result);
                         }
@@ -92,15 +98,15 @@ var DAO = {
     getActivitiesCount: function(userID, callback) {
         MongoClient.connect(connectionString, function(connectionError, db) {
             if (connectionError) {
-                callback(new Error("Database connection error: " + connectionError.message), null);
+                callback(new Error("Database connection error"), null);
             } else {
                 db.collection("activitystreams").count(
                     {
-                        actor: userID
+                        actor: new ObjectID(userID)
                     },
                     function(getError, result) {
                         if (getError) {
-                            callback(new Error("Activities count retrieving error: " + getError.message), null);
+                            callback(new Error("Activities count retrieving error"), null);
                         } else {
                             callback(null, result);
                         }

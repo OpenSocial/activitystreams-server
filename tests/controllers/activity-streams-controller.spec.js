@@ -3,7 +3,7 @@ describe("Activity streams controller", function() {
         activityID,
         verb = "post",
         published = new Date(),
-        actor = "John Doe",
+        actor = "537ddf1ac5f8210427a156bc",
         object = "image";
 
     it("adds activity to the database via controller", function(done) {

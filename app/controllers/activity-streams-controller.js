@@ -27,7 +27,7 @@ var activityStream = {
                     });
             } else {
                 res.send({
-                    "error": "Activity has not been successfully added!"
+                    "error": err.message
                 });
             }
         });
@@ -48,7 +48,7 @@ var activityStream = {
                 });
             } else {
                 res.send({
-                    "error": "Activity has not been successfully removed!"
+                    "error": err.message
                 });
             }
         });
@@ -74,13 +74,13 @@ var activityStream = {
                        });
                    } else {
                        res.send({
-                           "error": "Activity list has not been successfully retrieved!"
+                           "error": err.message
                        });
                    }
                });
            } else {
                res.send({
-                   "error": "Activity list has not been successfully retrieved!"
+                   "error": err.message
                });
            }
         });
