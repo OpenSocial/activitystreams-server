@@ -102,23 +102,31 @@
         var showNameDialog = function(objectType) {
             common.objectType.text(objectType);
             common.objectImage.removeClass().addClass("glyphicon " + dictionary.objectTypes[objectType]);
+            common.objectName.val("");
             common.nameDialog.modal();
         };
 
         return {
             postPhoto: function() {
                 showNameDialog("photo");
-                common.addActivityButton.one("click", function() {
-
-                    var activity = {
-                        "verb": "post",
-                        "published": new Date(),
-                        "object": {
-                            "type": "photo",
-                            "name": common.objectName.val()
-                        }
-                    };
-                    addActivity(activity);
+                common.addActivityButton.on("click", function() {
+                    var objectName = common.objectName.val();
+                    if (objectName !== "") {
+                        var activity = {
+                            "verb": "post",
+                            "published": new Date(),
+                            "object": {
+                                "type": "photo",
+                                "name": objectName
+                            }
+                        };
+                        addActivity(activity);
+                        common.nameDialog.modal("hide");
+                        common.nameDialogErrorArea.parent().toggleClass("hidden");
+                        common.addActivityButton.off("click");
+                    } else {
+                        common.nameDialogErrorArea.text("Please, enter the name to proceed").parent().toggleClass("hidden");
+                    }
                 });
             },
 
