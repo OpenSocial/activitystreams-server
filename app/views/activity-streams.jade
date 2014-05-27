@@ -2,16 +2,18 @@ extends layouts/default
 
 block content
     .container
+        input(type="hidden", id="loggedUserFollowings", value=loggedUser.followings.join())
         .row
+            //- ACTIONS block
             .col-md-3
                 .panel.panel-success
+                    //- Modal dialog to enter the name of the object
                     .modal.fade#nameDialog(tabindex="-1", role="dialog", aria-labelledby="nameDialogLabel", aria-hidden="true")
                         .modal-dialog
                             .modal-content
                                 .modal-header
                                     button.close(type="button", data-dismiss="modal", aria-hidden="true") &times;
-                                    h4.modal-title#nameDialogLabel Please, enter the name of the&nbsp;
-                                        span#objectType
+                                    h4.modal-title#nameDialogLabel
                                 .modal-body
                                     .alert.alert-danger.hidden
                                         span#nameDialogErrorArea
@@ -65,11 +67,31 @@ block content
                                 button#addLike.btn.btn-success.btn-lg
                                     span.glyphicon.glyphicon-heart
                                     span &nbsp;Add like
+            //- ACTIVITY STREAMS block
             .col-md-6
                 .panel.panel-primary
                     .panel-heading
                         h1.panel-title Activity streams
                     .panel-body
+                        .alert.alert-danger.hidden
+                            span#activityStreamsErrorArea
+                        ul.nav.nav-tabs
+                            li.active
+                                a(href="#followingsActivities", data-toggle="tab") Friends
+                            li
+                                a(href="#myActivities", data-toggle="tab") Me
+                        .tab-content
+                            .tab-pane.fade.in.active#followingsActivities
+                                table.table.table-hover
+                                    tbody#friendsActivityStreams
+                                        tr
+                                            td Activity list is empty
+                            .tab-pane.fade#myActivities
+                                table.table.table-hover
+                                    tbody#myActivityStreams
+                                        tr
+                                            td Activity list is empty
+            //- FOLLOWINGS block
             .col-md-3
                 .panel.panel-success
                     .panel-heading
@@ -98,4 +120,9 @@ block content
                                                     span.glyphicon.glyphicon-plus
 
 block custom-scripts
+    script(src=path + "/javascripts/common.js")
+    script(src=path + "/javascripts/dictionary.js")
     script(src=path + "/javascripts/activity-streams.js")
+    script(src=path + "/javascripts/followings.js")
+    script(src=path + "/javascripts/actions.js")
+    script(src=path + "/javascripts/app.js")

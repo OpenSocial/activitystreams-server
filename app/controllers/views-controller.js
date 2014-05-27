@@ -1,4 +1,5 @@
 var usersModel = require("../models/users-model"),
+    activityStreamsModel = require("../models/activity-streams-model"),
     config = require('../../libs/config'),
     port = config.get("port");
 
@@ -56,43 +57,81 @@ var viewsRenderer = {
     },
 
     /*
-     * @description Main page renderer
+     * @description Activity streams page renderer
      */
     activityStreams: function(req, res) {
-        usersModel.getUsers(0, "@all", function(err, results) {
-            if (!err) {
-                usersModel.getUser(req.params.userID, function(innerError, user) {
-                    if (!innerError) {
-                        // Delete the logged user from the result array
-                        for (var i = 0; i < results.length; i++) {
-                            if (String(results[i]._id) === String(user._id)) {
-                                results.splice(i, 1);
-                            }
-                        }
+        var noView = req.query.noView === "true";
 
-                        res.render("../views/activity-streams",
-                            {
-                                users: results,
-                                path: req.protocol + "://" + req.host + ":" + port,
-                                loggedUser: user
+        // Return the data without view rendering
+        if (noView) {
+            var userID = req.params.userID,
+                offset = req.query.offset,
+                count = req.query.count;
+
+            activityStreamsModel.getActivities(userID, offset, count, function(err, activities) {
+                if (!err) {
+                    activityStreamsModel.getActivitiesCount(userID, function(countErr, totalItems) {
+                        if (!countErr) {
+                            res.send({
+                                "success": "Activity list has been successfully retrieved!",
+                                "totalItems": totalItems,
+                                "items": activities
+                            });
+                        } else {
+                            res.send({
+                                "error": err.message
+                            });
+                        }
+                    });
+                } else {
+                    res.send({
+                        "error": err.message
+                    });
+                }
+            });
+
+        // Get the data and render the view
+        } else {
+            // Get all the users
+            usersModel.getUsers(0, "@all", function(err, users) {
+                if (!err) {
+                    // Get the logged in user info
+                    usersModel.getUser(req.params.userID, function(innerError, user) {
+                        if (!innerError) {
+                            // Delete the logged user from the result array
+                            for (var i = 0; i < users.length; i++) {
+                                if (String(users[i]._id) === String(user._id)) {
+                                    users.splice(i, 1);
+                                }
                             }
-                        );
-                    } else {
-                        res.render("../views/error",
-                            {
-                                error: innerError.message
-                            }
-                        );
-                    }
-                });
-            } else {
-                res.render("../views/error",
-                    {
-                        error: err.message
-                    }
-                );
-            }
-        });
+
+                            res.render("../views/activity-streams",
+                                {
+                                    users: users,
+                                    path: req.protocol + "://" + req.host + ":" + port,
+                                    loggedUser: user
+                                }
+                            );
+
+
+
+                        } else {
+                            res.render("../views/error",
+                                {
+                                    error: innerError.message
+                                }
+                            );
+                        }
+                    });
+                } else {
+                    res.render("../views/error",
+                        {
+                            error: err.message
+                        }
+                    );
+                }
+            });
+        }
     }
 };
 

@@ -1,4 +1,5 @@
-var activityStreamsModel = require("../models/activity-streams-model");
+var activityStreamsModel = require("../models/activity-streams-model"),
+    usersModel = require("../models/users-model");
 
 var activityStream = {
     /*
@@ -7,27 +8,41 @@ var activityStream = {
      * @see http://opensocial.github.io/spec/2.5.1/Social-API-Server.xml#ActivityStreams-Service-Create
      */
     add: function(req, res) {
-        var userID = req.params.userID ? req.params.userID : "@me",
-            verb = req.body.verb,
-            published = req.body.published,
-            object = req.body.object,
-            activity = {
-                verb: verb,
-                published: published,
-                actor: userID,
-                object: object
-            };
+        var userID = req.params.userID ? req.params.userID : "@me";
 
-        activityStreamsModel.add(activity, function(err, results) {
-            if (!err) {
-                res.send(
-                    {
-                        "activityID": results,
-                        "success": "Activity has been successfully added!"
-                    });
+        // Get the logged in user info
+        usersModel.getUser(userID, function(innerError, user) {
+            if (!innerError) {
+                var verb = req.body.verb,
+                    published = req.body.published,
+                    object = req.body.object,
+                    activity = {
+                        verb: verb,
+                        published: published,
+                        actor: {
+                            id: userID,
+                            name: user.name
+                        },
+                        object: object
+                    };
+
+                activityStreamsModel.add(activity, function(err, results) {
+                    if (!err) {
+                        res.send(
+                            {
+                                "activityID": results,
+                                "success": "Activity has been successfully added!"
+                            });
+                    } else {
+                        res.send({
+                            "error": err.message
+                        });
+                    }
+                });
+
             } else {
                 res.send({
-                    "error": err.message
+                    error: innerError.message
                 });
             }
         });

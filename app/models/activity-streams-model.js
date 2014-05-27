@@ -68,15 +68,21 @@ var DAO = {
             } else {
                 offset = offset ? offset : 0;
                 count = count ? count : "@all";
-                var options = {};
+
+                // Options set up
+                var options = {
+                    sort: {published: -1}
+                };
                 if (count !== "@all") {
                     options.skip = offset;
                     options.limit = count;
                 }
 
+                var followings = userID.split(",");
+
                 db.collection("activitystreams").find(
                     {
-                        actor: new ObjectID(userID)
+                        "actor.id": {$in: followings}
                     },
                     options).toArray(function(getError, result) {
                         if (getError) {
@@ -100,9 +106,11 @@ var DAO = {
             if (connectionError) {
                 callback(new Error("Database connection error"), null);
             } else {
+                var followings = userID.split(",");
+
                 db.collection("activitystreams").count(
                     {
-                        actor: new ObjectID(userID)
+                        "actor.id": {$in: followings}
                     },
                     function(getError, result) {
                         if (getError) {

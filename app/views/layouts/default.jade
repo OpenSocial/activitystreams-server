@@ -21,6 +21,7 @@ html
                     a.navbar-brand(href="/") Activity Streams Server Sandbox
                 if loggedUser
                     input(type="hidden", id="loggedUserID", value=loggedUser._id)
+                    input(type="hidden", id="loggedUserName", value=loggedUser.name)
                     p.navbar-text.navbar-right!= "Welcome, " + "<strong>" + loggedUser.name + "</strong>"
 
         block content
