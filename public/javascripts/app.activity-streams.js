@@ -23,16 +23,16 @@ app.activityStreams = (function($) {
      */
     var prependActivity = function(area, activity, index) {
         var formattedDate = formatDate(activity.published),
-            html =  "<tr class='success'><input type='hidden' id='actorID" + index + "' value='" + activity.actor.id + "'><td><div class='row'>"
-                    + "<div class='col-md-1'><span class='glyphicon " + app.dictionary.objectTypes[activity.object.type] + "'></span></div>"
-                    + "<div class='col-md-2'><small>" + formattedDate + "</small></div>"
-                    + "<div class='col-md-9'>"
-                    + "<strong>" + activity.actor.name + "</strong> "
-                    + app.dictionary.verbs[activity.verb] + " "
-                    + "<strong>" + activity.object.type + "</strong> "
-                    + "\"" + activity.object.name + "\""
-                    + "</div>"
-                    + "</div></td></tr>";
+            html =  "<tr class='success'><input type='hidden' id='actorID" + index + "' value='" + activity.actor.id + "'><td><div class='row'>" +
+                    "<div class='col-md-1'><span class='glyphicon " + app.dictionary.objectTypes[activity.object.type] + "'></span></div>" +
+                    "<div class='col-md-2'><small>" + formattedDate + "</small></div>" +
+                    "<div class='col-md-9'>" +
+                    "<strong>" + activity.actor.name + "</strong> " +
+                    app.dictionary.verbs[activity.verb] + " " +
+                    "<strong>" + activity.object.type + "</strong> " +
+                    "\"" + activity.object.name + "\"" +
+                    "</div>" +
+                    "</div></td></tr>";
         area.prepend(html);
         setTimeout(function() {
             $("input[id='actorID" + index + "']").parent().removeClass("success");
