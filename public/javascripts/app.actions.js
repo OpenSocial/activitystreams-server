@@ -1,4 +1,4 @@
-app.actions = (function($) {
+var app = (function($, module) {
 
     /*
      * @description Create activity
@@ -82,7 +82,7 @@ app.actions = (function($) {
         showNameDialog();
     };
 
-    return {
+    module.actions = {
         postPhoto: function() {
             createActivity("post", "photo");
         },
@@ -107,4 +107,6 @@ app.actions = (function($) {
             createActivity("add", "like");
         }
     };
-})(jQuery);
+
+    return module;
+})(jQuery, app || {});

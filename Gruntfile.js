@@ -5,26 +5,29 @@ module.exports = function(grunt) {
         pkg: grunt.file.readJSON("package.json"),
 
         concat: {
-            dist: {
-                src: [
-                    "public/javascripts/**/*.js"
-                ],
-                dest: "dist/js/production.js"
+            options: {
+                separator: ";"
+            },
+            login: {
+                src: ["public/javascripts/login.js"],
+                dest: "public/javascripts/prod/login.prod.js"
+            },
+            app: {
+                src: ["public/javascripts/app*.js"],
+                dest: "public/javascripts/prod/app.prod.js"
             }
         },
 
         cssmin: {
-            minify: {
-                expand: true,
-                cwd: "dist/css/",
-                src: ["public/stylesheets/**/*.css"],
-                dest: "dist/css/",
-                ext: ".min.css"
+            combine: {
+                files: {
+                    "public/stylesheets/prod/app.min.css": ["public/stylesheets/*.css"]
+                }
             }
         },
 
         jshint: {
-            files: ["gruntfile.js", "public/javascripts/**/*.js"],
+            files: ["gruntfile.js", "public/javascripts/*.js"],
             options: {
                 globals: {
                     jQuery: true,
@@ -35,9 +38,15 @@ module.exports = function(grunt) {
         },
         
         uglify: {
-            build: {
-                src: "dist/js/production.js",
-                dest: "dist/js/production.min.js"
+            login: {
+                files: {
+                    "public/javascripts/prod/login.prod.min.js": ["public/javascripts/prod/login.prod.js"]
+                }
+            },
+            app: {
+                files: {
+                    "public/javascripts/prod/app.prod.min.js": ["public/javascripts/prod/app.prod.js"]
+                }
             }
         },
         
@@ -51,7 +60,7 @@ module.exports = function(grunt) {
                 }
             },
             css: {
-                files: ["public/stylesheets/**/*.css"],
+                files: ["public/stylesheets/*.css"],
                 tasks: ["cssmin"],
                 options: {
                     livereload: true,

@@ -1,6 +1,7 @@
 var activityStreamsController = require("./activity-streams-controller"),
     usersController = require("./users-controller"),
-    viewsController = require("./views-controller");
+    viewsController = require("./views-controller"),
+    io;
 
 /*
  * @description Define the route map
@@ -12,7 +13,9 @@ var map = {
     "/activitystreams": {
         "/:userID": {
             "get": viewsController.activityStreams,
-            "post": activityStreamsController.add
+            "post": function(req, res) {
+                activityStreamsController.add(req, res, io);
+            }
         },
         "/:activityID": {
             "delete": activityStreamsController.remove
@@ -66,7 +69,8 @@ var createRoutes = function(routeMap, app, route) {
     }
 };
 
-var generateRouteMap = function(app) {
+var generateRouteMap = function(app, anIO) {
+    io = anIO;
     createRoutes(map, app);
     errorHandlers(app);
 };

@@ -12,13 +12,14 @@ html
         // HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries
         +ie("if lt IE 9", "<script src='https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js'></script>")
         +ie("if lt IE 9", "<script src='https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js'></script>")
-        link(rel="stylesheet", href=path + "/stylesheets/app.css")
+        link(rel="stylesheet", href=path + "/stylesheets/prod/app.min.css")
         block custom-stylesheets
     body
         .navbar.navbar-inverse.navbar-fixed-top(role="navigation")
             .container
                 .navbar-header
                     a.navbar-brand(href="/") Activity Streams Server Sandbox
+                    input(type="hidden", id="path", value=path)
                 if loggedUser
                     input(type="hidden", id="loggedUserID", value=loggedUser._id)
                     input(type="hidden", id="loggedUserName", value=loggedUser.name)
@@ -32,4 +33,5 @@ html
 
         script(src=path + "/assets/jquery/js/jquery.min.js")
         script(src=path + "/assets/bootstrap/js/bootstrap.min.js")
+        script(src="/socket.io/socket.io.js")
         block custom-scripts

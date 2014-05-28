@@ -30,6 +30,7 @@
         "method-override": "1.0.x",
         "mongodb": "1.4.x",
         "nconf": "0.6.x",
+        "socket.io": "*",
         "serve-favicon": "2.0.x"
     },
     "devDependencies": {

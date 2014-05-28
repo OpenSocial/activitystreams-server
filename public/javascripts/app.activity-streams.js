@@ -1,4 +1,4 @@
-app.activityStreams = (function($) {
+var app = (function($, module) {
 
     /*
      * @description Format date to display
@@ -22,6 +22,19 @@ app.activityStreams = (function($) {
      * @param index Index of the activity in the stream
      */
     var prependActivity = function(area, activity, index) {
+        // Cleaning the area and increasing the activities count
+        if (area === app.common.myActivityStreamsArea) {
+            if (app.common.myActivityStreamsAreaCount === 0) {
+                area.empty();
+            }
+            app.common.myActivityStreamsAreaCount++;
+        } else if (area === app.common.followingsActivityStreamsArea) {
+            if (app.common.followingsActivityStreamsAreaCount === 0) {
+                area.empty();
+            }
+            app.common.followingsActivityStreamsAreaCount++;
+        }
+
         var formattedDate = formatDate(activity.published),
             html =  "<tr class='success'><input type='hidden' id='actorID" + index + "' value='" + activity.actor.id + "'><td><div class='row'>" +
                     "<div class='col-md-1'><span class='glyphicon " + app.dictionary.objectTypes[activity.object.type] + "'></span></div>" +
@@ -51,7 +64,7 @@ app.activityStreams = (function($) {
         }
     };
 
-    return {
+    module.activityStreams = {
         prependActivity: prependActivity,
 
         /*
@@ -83,4 +96,6 @@ app.activityStreams = (function($) {
 
         }
     };
-})(jQuery);
+
+    return module;
+})(jQuery, app || {});

@@ -2,10 +2,10 @@
  * @description Activity streams DAO
  */
 
-var MongoClient = require('mongodb').MongoClient,
-    config = require('../../libs/config'),
-    connectionString = config.get('mongodb:uri'),
-    ObjectID = require('mongodb').ObjectID;
+var MongoClient = require("mongodb").MongoClient,
+    config = require("../../libs/config"),
+    connectionString = config.get("mongodb:uri"),
+    ObjectID = require("mongodb").ObjectID;
 
 var DAO = {
     /*

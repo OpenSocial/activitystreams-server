@@ -1,12 +1,12 @@
-var app = app || {};
-app.common = (function($) {
+var app = (function($, module) {
 
     /*
      * @description Common data (values, DOM objects, etc.) to work with
      */
-    return {
+    module.common = {
         userID: null,
         userName: null,
+        path: null,
         followings: [],
         follwingsErrorArea: null,
         actionsErrorArea: null,
@@ -18,10 +18,14 @@ app.common = (function($) {
         nameDialogErrorArea: null,
         activityStreamsErrorArea: null,
         myActivityStreamsArea: null,
+        myActivityStreamsAreaCount: 0,
         followingsActivityStreamsArea: null,
+        followingsActivityStreamsAreaCount: 0,
+        emptyActivityStreamsAreaHTML: "<tr><td>Activity list is empty</td></tr>",
         init: function() {
             this.userID = $("#loggedUserID").val();
             this.userName = $("#loggedUserName").val();
+            this.path = $("#path").val();
             var loggedUserFollowings = $("#loggedUserFollowings").val();
             if (loggedUserFollowings !== "") {
                 this.followings = String(loggedUserFollowings).split(",");
@@ -40,4 +44,6 @@ app.common = (function($) {
             this.followingsActivityStreamsArea = $("#friendsActivityStreams");
         }
     };
-})(jQuery);
+
+    return module;
+})(jQuery, app || {});

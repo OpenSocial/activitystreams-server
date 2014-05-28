@@ -7,7 +7,7 @@ var activityStream = {
      *              to add the activity entry for the user specified
      * @see http://opensocial.github.io/spec/2.5.1/Social-API-Server.xml#ActivityStreams-Service-Create
      */
-    add: function(req, res) {
+    add: function(req, res, io) {
         var userID = req.params.userID ? req.params.userID : "@me";
 
         // Get the logged in user info
@@ -28,6 +28,7 @@ var activityStream = {
 
                 activityStreamsModel.add(activity, function(err, results) {
                     if (!err) {
+                        io.sockets.emit("activityAdded", activity, user);
                         res.send(
                             {
                                 "activityID": results,

@@ -1,9 +1,9 @@
-app.followings = (function($) {
+var app = (function($, module) {
 
     /*
      * @description Followings block functions
      */
-    return {
+    module.followings = {
         add: function() {
             var followButton = $(this),
                 followingID = followButton.find("[id^='followingID']").val(),
@@ -24,7 +24,15 @@ app.followings = (function($) {
                             app.common.followings.splice(indexToDelete, 1);
                             isFollowedInput.val("false");
                             followButton.attr("title", "Follow");
-                            app.common.followingsActivityStreamsArea.find("tr").filter(":has(input[value='" + followingID + "'])").remove();
+
+                            // Remove the activities from display, recalculate counter and show "empty" message if necessary
+                            var activities = app.common.followingsActivityStreamsArea.find("tr").filter(":has(input[value='" + followingID + "'])"),
+                                size = activities.size();
+                            activities.remove();
+                            app.common.followingsActivityStreamsAreaCount -= size;
+                            if (app.common.followingsActivityStreamsAreaCount === 0) {
+                                app.common.followingsActivityStreamsArea.html(app.common.emptyActivityStreamsAreaHTML);
+                            }
 
                             // The following has been added
                         } else {
@@ -46,4 +54,6 @@ app.followings = (function($) {
             });
         }
     };
-})(jQuery);
+
+    return module;
+})(jQuery, app || {});

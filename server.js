@@ -22,7 +22,9 @@ var express = require("express"),
     // Favicon serving
     favicon = require("serve-favicon"),
 
-    app = express();
+    app = express(),
+
+    socketIO = require("socket.io");
 
 // Application configuration
 app.use(favicon(path.join(__dirname, "public/images/favicon.ico")));
@@ -40,10 +42,12 @@ app.use(errorHandler());
 // Static file server watching on the "public" folder and returning the static content
 app.use(express.static(path.join(__dirname, "public")));
 
-// Generate route map
-routeMap(app);
+// Set up server and sockets
+var server = require("http").createServer(app),
+    io = socketIO.listen(server, { log: false });
 
-// Server is listening on configuration port
-app.listen(config.get("port"), function() {
-    console.log("Express server listening on port " + config.get("port"));
-});
+server.listen(config.get("port"));
+
+// Generate route map
+routeMap(app, io);
+
