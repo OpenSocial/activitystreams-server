@@ -23,7 +23,7 @@ app.actions = (function($) {
                             name: app.common.userName
                         };
                         activity._id = data.activityID;
-                        app.activityStreams.appendActivity(app.common.myActivityStreamsArea, activity, app.common.myActivityStreamsArea.find("tr").size());
+                        app.activityStreams.prependActivity(app.common.myActivityStreamsArea, activity, app.common.myActivityStreamsArea.find("tr").size());
                     } else {
                         app.common.actionsErrorArea.text(data.error).parent().toggleClass("hidden");
                     }

@@ -3,7 +3,7 @@ app.dictionary = (function($) {
     /*
      * @description Dictionary - verbs, types, etc.
      */
-    var dictionary = {
+    return {
         verbs: {
             "post": "posted",
             "recommend": "recommended",
@@ -18,6 +18,4 @@ app.dictionary = (function($) {
             "like": "glyphicon-heart"
         }
     };
-
-    return dictionary;
 })(jQuery);

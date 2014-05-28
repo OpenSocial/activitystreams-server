@@ -4,7 +4,7 @@ app.common = (function($) {
     /*
      * @description Common data (values, DOM objects, etc.) to work with
      */
-    var common = {
+    return {
         userID: null,
         userName: null,
         followings: [],
@@ -40,6 +40,4 @@ app.common = (function($) {
             this.followingsActivityStreamsArea = $("#friendsActivityStreams");
         }
     };
-
-    return common;
 })(jQuery);

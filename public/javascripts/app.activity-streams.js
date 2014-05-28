@@ -21,7 +21,7 @@ app.activityStreams = (function($) {
      * @param activity Activity to append
      * @param index Index of the activity in the stream
      */
-    var appendActivity = function(area, activity, index) {
+    var prependActivity = function(area, activity, index) {
         var formattedDate = formatDate(activity.published),
             html =  "<tr class='success'><input type='hidden' id='actorID" + index + "' value='" + activity.actor.id + "'><td><div class='row'>"
                     + "<div class='col-md-1'><span class='glyphicon " + app.dictionary.objectTypes[activity.object.type] + "'></span></div>"
@@ -33,8 +33,10 @@ app.activityStreams = (function($) {
                     + "\"" + activity.object.name + "\""
                     + "</div>"
                     + "</div></td></tr>";
-        area.append(html);
-        $("input[id='actorID" + index + "']").parent().removeClass("success", 5000);
+        area.prepend(html);
+        setTimeout(function() {
+            $("input[id='actorID" + index + "']").parent().removeClass("success");
+        }, 3000);
     };
 
     /*
@@ -45,12 +47,12 @@ app.activityStreams = (function($) {
     var renderActivityStreams = function(area, data) {
         for (var i = 0, l = data.items.length; i < l; i++) {
             var item = data.items[i];
-            appendActivity(area, item, i);
+            prependActivity(area, item, i);
         }
     };
 
     return {
-        appendActivity: appendActivity,
+        prependActivity: prependActivity,
 
         /*
          * @description Get and display activities

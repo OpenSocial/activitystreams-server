@@ -3,7 +3,7 @@ app.followings = (function($) {
     /*
      * @description Followings block functions
      */
-    var followings = {
+    return {
         add: function() {
             var followButton = $(this),
                 followingID = followButton.find("[id^='followingID']").val(),
@@ -24,7 +24,7 @@ app.followings = (function($) {
                             app.common.followings.splice(indexToDelete, 1);
                             isFollowedInput.val("false");
                             followButton.attr("title", "Follow");
-                            app.common.followingsActivityStreamsArea.find("tr.active").filter(":has(input[value='" + followingID + "'])").remove();
+                            app.common.followingsActivityStreamsArea.find("tr").filter(":has(input[value='" + followingID + "'])").remove();
 
                             // The following has been added
                         } else {
@@ -46,6 +46,4 @@ app.followings = (function($) {
             });
         }
     };
-
-    return followings;
 })(jQuery);
