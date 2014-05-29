@@ -4,21 +4,26 @@
         create: function() {
             var username = $("#username").val(),
                 errorArea = $("#errorInfo");
-            $.ajax({
-                url: "/users/" + username,
-                async: false,
-                type: "POST",
-                success: function(data) {
-                    if (data.success) {
-                        user.id = data.userID;
-                    } else {
-                        errorArea.text(data.error).parent().toggleClass("hidden");
+
+            if (username === "") {
+                errorArea.text("User name cannot be empty.").parent().toggleClass("hidden");
+            } else {
+                $.ajax({
+                    url: "/users/" + username,
+                    async: false,
+                    type: "POST",
+                    success: function(data) {
+                        if (data.success) {
+                            user.id = data.userID;
+                        } else {
+                            errorArea.text(data.error).parent().toggleClass("hidden");
+                        }
+                    },
+                    error: function() {
+                        errorArea.text("Unexpected error occured.").parent().toggleClass("hidden");
                     }
-                },
-                error: function() {
-                    errorArea.text("Unexpected error occured.").parent().toggleClass("hidden");
-                }
-            });
+                });
+            }
         }
     };
 

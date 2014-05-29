@@ -1,7 +1,7 @@
 //- BEGIN of Mixins
 mixin renderUsers(startIndex, endIndex)
     - for (var i = startIndex; i < endIndex; i++) {
-        - var userHref = "/activitystreams/" + users[i]._id
+        - var userHref = "/activitystreams/" + users[i]._id + "?view=true"
         - if (i % usersPerLine === 0) {
             - if (i !== startIndex) {
                 | </div>
@@ -12,7 +12,7 @@ mixin renderUsers(startIndex, endIndex)
             | <div class="row">
         - }
         .col-md-2
-            a.btn.btn-success(href=userHref)= users[i].name
+            a.btn.btn-success.btn-block(href=userHref)= users[i].name
     - }
     | </div>
 

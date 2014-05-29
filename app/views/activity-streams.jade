@@ -34,37 +34,37 @@ block content
                             span#actionsErrorArea
                         .row
                             .col-md-12
-                                button#postPhoto.btn.btn-success.btn-lg
+                                button#postPhoto.btn.btn-success.btn-lg.btn-block
                                     span.glyphicon.glyphicon-picture
                                     span &nbsp;Post a photo
                         br
                         .row
                             .col-md-12
-                                button#postVideo.btn.btn-success.btn-lg
+                                button#postVideo.btn.btn-success.btn-lg.btn-block
                                     span.glyphicon.glyphicon-facetime-video
                                     span &nbsp;Post a video
                         br
                         .row
                             .col-md-12
-                                button#postNote.btn.btn-success.btn-lg
+                                button#postNote.btn.btn-success.btn-lg.btn-block
                                     span.glyphicon.glyphicon-edit
                                     span &nbsp;Post a note
                         br
                         .row
                             .col-md-12
-                                button#recommendPlace.btn.btn-success.btn-lg
+                                button#recommendPlace.btn.btn-success.btn-lg.btn-block
                                     span.glyphicon.glyphicon-map-marker
                                     span &nbsp;Recommend a place
                         br
                         .row
                             .col-md-12
-                                button#postAudio.btn.btn-success.btn-lg
+                                button#postAudio.btn.btn-success.btn-lg.btn-block
                                     span.glyphicon.glyphicon-music
                                     span &nbsp;Post an audio
                         br
                         .row
                             .col-md-12
-                                button#addLike.btn.btn-success.btn-lg
+                                button#addLike.btn.btn-success.btn-lg.btn-block
                                     span.glyphicon.glyphicon-heart
                                     span &nbsp;Add like
             //- ACTIVITY STREAMS block
@@ -120,4 +120,5 @@ block content
                                                     span.glyphicon.glyphicon-plus
 
 block custom-scripts
+    script(src=path + "/assets/jquery-timeago/js/jquery.timeago.js")
     script(src=path + "/javascripts/prod/app.prod.min.js")

@@ -60,10 +60,10 @@ var viewsRenderer = {
      * @description Activity streams page renderer
      */
     activityStreams: function(req, res) {
-        var noView = req.query.noView === "true";
+        var view = req.query.view === "true";
 
         // Return the data without view rendering
-        if (noView) {
+        if (!view) {
             var userID = req.params.userID,
                 offset = req.query.offset,
                 count = req.query.count;

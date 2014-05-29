@@ -109,22 +109,8 @@ var app = (function($, module) {
     };
 
     return module;
-})(jQuery, app || {});;var app = (function($, module) {
-
-    /*
-     * @description Format date to display
-     * @param date Date to format
-     * @return Formatted date
-     */
-    var formatDate = function(dateToFormat) {
-        var date = new Date(Date.parse(dateToFormat)),
-            day =  date.getDate() > 9 ? date.getDate() : "0" + date.getDate(),
-            month =  date.getMonth() > 8 ? date.getMonth() + 1 : "0" + (date.getMonth() + 1),
-            year = date.getFullYear(),
-            hours = date.getHours() > 9 ? date.getHours() : "0" + date.getHours(),
-            minutes = date.getMinutes() > 9 ? date.getMinutes() : "0" + date.getMinutes();
-            return day + "." + month + "." + year + " " + hours + ":" + minutes;
-    };
+})(jQuery, app || {});
+;var app = (function($, module) {
 
     /*
      * @description Append one activity to the stream
@@ -146,10 +132,10 @@ var app = (function($, module) {
             app.common.followingsActivityStreamsAreaCount++;
         }
 
-        var formattedDate = formatDate(activity.published),
+        var //formattedDate = formatDate(activity.published),
             html =  "<tr class='success'><input type='hidden' id='actorID" + index + "' value='" + activity.actor.id + "'><td><div class='row'>" +
                     "<div class='col-md-1'><span class='glyphicon " + app.dictionary.objectTypes[activity.object.type] + "'></span></div>" +
-                    "<div class='col-md-2'><small>" + formattedDate + "</small></div>" +
+                    "<div class='col-md-2'><small><abbr class='timeago' title='" + new Date(activity.published).toISOString() + "'></abbr></small></div>" +
                     "<div class='col-md-9'>" +
                     "<strong>" + activity.actor.name + "</strong> " +
                     app.dictionary.verbs[activity.verb] + " " +
@@ -161,6 +147,7 @@ var app = (function($, module) {
         setTimeout(function() {
             $("input[id='actorID" + index + "']").parent().removeClass("success");
         }, 3000);
+        $("abbr.timeago").timeago();
     };
 
     /*
@@ -186,7 +173,7 @@ var app = (function($, module) {
          */
         displayActivityStreams: function(area, users, isInitial) {
             $.ajax({
-                url: "/activitystreams/" + users + "?noView=true",
+                url: "/activitystreams/" + users,
                 type: "GET",
                 success: function(data) {
                     if (data.success) {
@@ -209,7 +196,8 @@ var app = (function($, module) {
     };
 
     return module;
-})(jQuery, app || {});;var app = (function($, module) {
+})(jQuery, app || {});
+;var app = (function($, module) {
 
     /*
      * @description Common data (values, DOM objects, etc.) to work with
@@ -219,7 +207,7 @@ var app = (function($, module) {
         userName: null,
         path: null,
         followings: [],
-        follwingsErrorArea: null,
+        followingsErrorArea: null,
         actionsErrorArea: null,
         nameDialog: null,
         nameDialogLabel: null,
@@ -257,7 +245,8 @@ var app = (function($, module) {
     };
 
     return module;
-})(jQuery, app || {});;var app = (function($, module) {
+})(jQuery, app || {});
+;var app = (function($, module) {
 
     /*
      * @description Dictionary - verbs, types, etc.
@@ -279,7 +268,8 @@ var app = (function($, module) {
     };
 
     return module;
-})(jQuery, app || {});;var app = (function($, module) {
+})(jQuery, app || {});
+;var app = (function($, module) {
 
     /*
      * @description Followings block functions
@@ -337,7 +327,8 @@ var app = (function($, module) {
     };
 
     return module;
-})(jQuery, app || {});;(function($) {
+})(jQuery, app || {});
+;(function($) {
     $(document).ready(function() {
         // Common data initialization
         app.common.init();

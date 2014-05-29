@@ -49,5 +49,5 @@ var server = require("http").createServer(app),
 server.listen(config.get("port"));
 
 // Generate route map
-routeMap(app, io);
-
+routeMap.setIO(io);
+routeMap.generateRouteMap(app);

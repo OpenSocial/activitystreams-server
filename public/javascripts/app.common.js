@@ -8,7 +8,7 @@ var app = (function($, module) {
         userName: null,
         path: null,
         followings: [],
-        follwingsErrorArea: null,
+        followingsErrorArea: null,
         actionsErrorArea: null,
         nameDialog: null,
         nameDialogLabel: null,
