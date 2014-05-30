@@ -12,7 +12,7 @@
         });
 
         // Event bindings
-        $("button[id^='follow']").click(app.followings.add);
+        $("button[id^='follow']").click(app.followings.addOrRemove);
         $("#postPhoto").click(app.actions.postPhoto);
         $("#postVideo").click(app.actions.postVideo);
         $("#postNote").click(app.actions.postNote);

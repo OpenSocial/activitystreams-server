@@ -43,14 +43,22 @@ var app = (function($, module) {
             var objectName = app.common.objectName.val();
             objectName = objectName.replace(/\\/gm, "\\").replace(/"/gm, "\"");
             if (objectName !== "") {
-                var activity = {
-                    "verb": verb,
-                    "published": new Date(),
-                    "object": {
-                        "type": objectType,
-                        "name": objectName
-                    }
-                };
+                var obj = asms.Activity({
+                    verb: 'post',
+                    actor: 'acct:joe@example.org',
+                    object: 'http://example.org/notes/1',
+                    testField: "ololo"
+                });
+
+                var activityObj = asms.Activity({
+                        "verb": verb,
+                        "published": new Date(),
+                        "object": {
+                            "type": objectType,
+                            "name": objectName
+                        }
+                    }),
+                    activity = activityObj.__wrapped__;
                 addActivity(activity);
                 app.common.nameDialog.modal("hide");
                 app.common.addActivityButton.off("click");
@@ -132,8 +140,7 @@ var app = (function($, module) {
             app.common.followingsActivityStreamsAreaCount++;
         }
 
-        var //formattedDate = formatDate(activity.published),
-            html =  "<tr class='success'><input type='hidden' id='actorID" + index + "' value='" + activity.actor.id + "'><td><div class='row'>" +
+        var html =  "<tr class='success'><input type='hidden' id='actorID" + index + "' value='" + activity.actor.id + "'><td><div class='row'>" +
                     "<div class='col-md-1'><span class='glyphicon " + app.dictionary.objectTypes[activity.object.type] + "'></span></div>" +
                     "<div class='col-md-2'><small><abbr class='timeago' title='" + new Date(activity.published).toISOString() + "'></abbr></small></div>" +
                     "<div class='col-md-9'>" +
@@ -275,7 +282,7 @@ var app = (function($, module) {
      * @description Followings block functions
      */
     module.followings = {
-        add: function() {
+        addOrRemove: function() {
             var followButton = $(this),
                 followingID = followButton.find("[id^='followingID']").val(),
                 isFollowedInput = followButton.find("[id^='isFollowed']"),
@@ -342,7 +349,7 @@ var app = (function($, module) {
         });
 
         // Event bindings
-        $("button[id^='follow']").click(app.followings.add);
+        $("button[id^='follow']").click(app.followings.addOrRemove);
         $("#postPhoto").click(app.actions.postPhoto);
         $("#postVideo").click(app.actions.postVideo);
         $("#postNote").click(app.actions.postNote);

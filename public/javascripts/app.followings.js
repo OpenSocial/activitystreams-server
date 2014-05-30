@@ -4,7 +4,7 @@ var app = (function($, module) {
      * @description Followings block functions
      */
     module.followings = {
-        add: function() {
+        addOrRemove: function() {
             var followButton = $(this),
                 followingID = followButton.find("[id^='followingID']").val(),
                 isFollowedInput = followButton.find("[id^='isFollowed']"),

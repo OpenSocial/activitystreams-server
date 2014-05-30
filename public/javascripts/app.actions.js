@@ -43,14 +43,22 @@ var app = (function($, module) {
             var objectName = app.common.objectName.val();
             objectName = objectName.replace(/\\/gm, "\\").replace(/"/gm, "\"");
             if (objectName !== "") {
-                var activity = {
-                    "verb": verb,
-                    "published": new Date(),
-                    "object": {
-                        "type": objectType,
-                        "name": objectName
-                    }
-                };
+                var obj = asms.Activity({
+                    verb: 'post',
+                    actor: 'acct:joe@example.org',
+                    object: 'http://example.org/notes/1',
+                    testField: "ololo"
+                });
+
+                var activityObj = asms.Activity({
+                        "verb": verb,
+                        "published": new Date(),
+                        "object": {
+                            "type": objectType,
+                            "name": objectName
+                        }
+                    }),
+                    activity = activityObj.__wrapped__;
                 addActivity(activity);
                 app.common.nameDialog.modal("hide");
                 app.common.addActivityButton.off("click");

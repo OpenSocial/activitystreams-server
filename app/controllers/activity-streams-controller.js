@@ -1,5 +1,6 @@
 var activityStreamsModel = require("../models/activity-streams-model"),
-    usersModel = require("../models/users-model");
+    usersModel = require("../models/users-model"),
+    asms = require("../../public/assets/activitystreams/js/activitystreams");
 
 var activityStream = {
     /*
@@ -19,7 +20,7 @@ var activityStream = {
      *              to add the activity entry for the user specified
      * @see http://opensocial.github.io/spec/2.5.1/Social-API-Server.xml#ActivityStreams-Service-Create
      */
-    add: function(req, res, io) {
+    add: function(req, res) {
         var userID = req.params.userID;
 
         // Get the logged in user info
@@ -28,7 +29,7 @@ var activityStream = {
                 var verb = req.body.verb,
                     published = req.body.published,
                     object = req.body.object,
-                    activity = {
+                    activityObj = asms.Activity({
                         verb: verb,
                         published: published,
                         actor: {
@@ -36,7 +37,8 @@ var activityStream = {
                             name: user.name
                         },
                         object: object
-                    };
+                    }),
+                    activity = activityObj.__wrapped__;
 
                 activityStreamsModel.add(activity, function(err, results) {
                     if (!err) {
