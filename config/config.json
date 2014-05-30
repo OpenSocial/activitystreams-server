@@ -1,0 +1,6 @@
+{
+    "port" : 8080,
+    "mongodb": {
+        "uri": "mongodb://localhost:27017/as_server"
+    }
+}
