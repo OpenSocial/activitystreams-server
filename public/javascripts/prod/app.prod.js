@@ -24,6 +24,7 @@ var app = (function($, module) {
                         };
                         activity._id = data.activityID;
                         app.activityStreams.prependActivity(app.common.myActivityStreamsArea, activity, app.common.myActivityStreamsArea.find("tr").size());
+                        app.common.socket.emit("userAddedActivity", app.common.userID, activity);
                     } else {
                         app.common.actionsErrorArea.text(data.error).parent().toggleClass("hidden");
                     }
@@ -210,6 +211,7 @@ var app = (function($, module) {
      * @description Common data (values, DOM objects, etc.) to work with
      */
     module.common = {
+        socket: null,
         userID: null,
         userName: null,
         path: null,
@@ -248,6 +250,7 @@ var app = (function($, module) {
             this.activityStreamsErrorArea = $("#activityStreamsErrorArea");
             this.myActivityStreamsArea = $("#myActivityStreams");
             this.followingsActivityStreamsArea = $("#friendsActivityStreams");
+            this.socket = io.connect(this.path);
         }
     };
 
@@ -340,12 +343,13 @@ var app = (function($, module) {
         // Common data initialization
         app.common.init();
 
-        // Socket connection
-        var socket = io.connect(app.common.path);
-        socket.on("activityAdded", function(activity, sender) {
-            if (sender.followers.indexOf(app.common.userID) >= 0) {
-                app.activityStreams.prependActivity(app.common.followingsActivityStreamsArea, activity, app.common.followingsActivityStreamsArea.find("tr").size());
-            }
+        // Socket events
+        app.common.socket.on("clientConnected", function() {
+            app.common.socket.emit("clientSendsData", app.common.userID);
+        });
+
+        app.common.socket.on("followingAddedActivity", function(activity) {
+            app.activityStreams.prependActivity(app.common.followingsActivityStreamsArea, activity, app.common.followingsActivityStreamsArea.find("tr").size());
         });
 
         // Event bindings

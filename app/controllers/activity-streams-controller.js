@@ -4,18 +4,6 @@ var activityStreamsModel = require("../models/activity-streams-model"),
 
 var activityStream = {
     /*
-     * @description Socket.io connection object
-     */
-    io: null,
-
-    /*
-     * @description Socket.io setup
-     */
-    setupIO: function(anIO) {
-        this.io = anIO;
-    },
-
-    /*
      * @description REST method (HTTP POST /activitystreams/:userID)
      *              to add the activity entry for the user specified
      * @see http://opensocial.github.io/spec/2.5.1/Social-API-Server.xml#ActivityStreams-Service-Create
@@ -42,7 +30,6 @@ var activityStream = {
 
                 activityStreamsModel.add(activity, function(err, results) {
                     if (!err) {
-                        activityStream.io.sockets.emit("activityAdded", activity, user);
                         res.send(
                             {
                                 "activityID": results,

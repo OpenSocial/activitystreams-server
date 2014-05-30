@@ -4,6 +4,7 @@ var app = (function($, module) {
      * @description Common data (values, DOM objects, etc.) to work with
      */
     module.common = {
+        socket: null,
         userID: null,
         userName: null,
         path: null,
@@ -42,6 +43,7 @@ var app = (function($, module) {
             this.activityStreamsErrorArea = $("#activityStreamsErrorArea");
             this.myActivityStreamsArea = $("#myActivityStreams");
             this.followingsActivityStreamsArea = $("#friendsActivityStreams");
+            this.socket = io.connect(this.path);
         }
     };
 

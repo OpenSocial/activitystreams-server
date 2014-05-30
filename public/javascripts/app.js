@@ -3,12 +3,13 @@
         // Common data initialization
         app.common.init();
 
-        // Socket connection
-        var socket = io.connect(app.common.path);
-        socket.on("activityAdded", function(activity, sender) {
-            if (sender.followers.indexOf(app.common.userID) >= 0) {
-                app.activityStreams.prependActivity(app.common.followingsActivityStreamsArea, activity, app.common.followingsActivityStreamsArea.find("tr").size());
-            }
+        // Socket events
+        app.common.socket.on("clientConnected", function() {
+            app.common.socket.emit("clientSendsData", app.common.userID);
+        });
+
+        app.common.socket.on("followingAddedActivity", function(activity) {
+            app.activityStreams.prependActivity(app.common.followingsActivityStreamsArea, activity, app.common.followingsActivityStreamsArea.find("tr").size());
         });
 
         // Event bindings

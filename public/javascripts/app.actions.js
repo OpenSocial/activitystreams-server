@@ -24,6 +24,7 @@ var app = (function($, module) {
                         };
                         activity._id = data.activityID;
                         app.activityStreams.prependActivity(app.common.myActivityStreamsArea, activity, app.common.myActivityStreamsArea.find("tr").size());
+                        app.common.socket.emit("userAddedActivity", app.common.userID, activity);
                     } else {
                         app.common.actionsErrorArea.text(data.error).parent().toggleClass("hidden");
                     }

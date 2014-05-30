@@ -71,9 +71,4 @@ var generateRouteMap = function(app) {
     errorHandlers(app);
 };
 
-module.exports = {
-    setIO: function(anIO) {
-        activityStreamsController.setupIO(anIO);
-    },
-    generateRouteMap: generateRouteMap
-};
+module.exports = generateRouteMap;

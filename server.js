@@ -24,7 +24,9 @@ var express = require("express"),
 
     app = express(),
 
-    socketIO = require("socket.io");
+    socketIO = require("socket.io"),
+
+    socketHandler = require("./app/controllers/socketHandler");
 
 // Application configuration
 app.use(favicon(path.join(__dirname, "public/images/favicon.ico")));
@@ -49,5 +51,5 @@ var server = require("http").createServer(app),
 server.listen(config.get("port"));
 
 // Generate route map
-routeMap.setIO(io);
-routeMap.generateRouteMap(app);
+socketHandler(io);
+routeMap(app);
