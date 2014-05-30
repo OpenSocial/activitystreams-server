@@ -35,7 +35,7 @@
         $("#play").click(function() {
             user.create();
             if (user.id) {
-                window.location.replace(window.location.origin + "/activitystreams/" + user.id);
+                window.location.replace(window.location.origin + "/activitystreams/" + user.id + "?view=true");
             }
             return false;
         });

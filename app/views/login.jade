@@ -40,28 +40,29 @@ block content
             if users.length > 0
                 .panel-heading
                     h1.panel-title or choose one of the users already played!
-            .panel-body
+                .panel-body
 
-                //- Calculate records to show/hide
-                - var endIndex = users.length <= usersToShow ? users.length : usersToShow
-                - var addHidden = users.length > usersToShow
+                    //- Calculate records to show/hide
+                    - var endIndex = users.length <= usersToShow ? users.length : usersToShow
+                    - var addHidden = users.length > usersToShow
 
-                //- Show {usersToShow} first records as a rows
-                +renderUsers(0, endIndex)
+                    //- Show {usersToShow} first records as a rows
+                    +renderUsers(0, endIndex)
 
-                //- Render hidden items
-                - if (addHidden) {
-                    | <div class="hidden" id="hiddenUsers">
-                    +renderUsers(endIndex, users.length)
-                    | </div>
-                - }
+                    //- Render hidden items
+                    - if (addHidden) {
+                        | <div class="hidden" id="hiddenUsers">
+                        +renderUsers(endIndex, users.length)
+                        | </div>
+                    - }
 
-                //- "Show all" button
-                br
-                .row
-                    .col-md-offset-5.col-md-2
-                        button#showAll.btn.btn-info.btn-xs.center-block Show all&nbsp;
-                            span.badge= users.length - endIndex
+                    //- "Show all" button
+                    if addHidden
+                        br
+                        .row
+                            .col-md-offset-5.col-md-2
+                                button#showAll.btn.btn-info.btn-xs.center-block Show all&nbsp;
+                                    span.badge= users.length - endIndex
 
 block custom-scripts
     script(src=path + "/javascripts/prod/login.prod.min.js")
