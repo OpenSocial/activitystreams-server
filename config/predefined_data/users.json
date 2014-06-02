@@ -1,0 +1,32 @@
+[
+    {
+        "_id": "53885faeeb2bce9036799401",
+        "name": "Dickson Maldonado",
+        "followings": ["53885faeeb2bce9036799402", "53885faeeb2bce9036799404"],
+        "followers": ["53885faeeb2bce9036799404", "53885faeeb2bce9036799405"]
+    },
+    {
+        "_id": "53885faeeb2bce9036799402",
+        "name": "Cervantes Glenn",
+        "followings": ["53885faeeb2bce9036799403", "53885faeeb2bce9036799404", "53885faeeb2bce9036799405"],
+        "followers": ["53885faeeb2bce9036799401", "53885faeeb2bce9036799404"]
+    },
+    {
+        "_id": "53885faeeb2bce9036799403",
+        "name": "Velazquez Fox",
+        "followings": ["53885faeeb2bce9036799405"],
+        "followers": ["53885faeeb2bce9036799402"]
+    },
+    {
+        "_id": "53885faeeb2bce9036799404",
+        "name": "Hall Sweeney",
+        "followings": ["53885faeeb2bce9036799401", "53885faeeb2bce9036799402"],
+        "followers": ["53885faeeb2bce9036799401", "53885faeeb2bce9036799402"]
+    },
+    {
+        "_id": "53885faeeb2bce9036799405",
+        "name": "Burns Hodges",
+        "followings": ["53885faeeb2bce9036799401"],
+        "followers": ["53885faeeb2bce9036799402", "53885faeeb2bce9036799403"]
+    }
+]

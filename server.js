@@ -26,7 +26,9 @@ var express = require("express"),
 
     socketIO = require("socket.io"),
 
-    socketHandler = require("./app/controllers/socketHandler");
+    socketHandler = require("./app/controllers/socketHandler"),
+
+    predefinedDataLoader = require("./app/controllers/predefinedDataLoader");
 
 // Application configuration
 app.use(favicon(path.join(__dirname, "public/images/favicon.ico")));
@@ -50,6 +52,11 @@ var server = require("http").createServer(app),
 
 server.listen(config.get("port"));
 
-// Generate route map
+// Set up socket connections handler
 socketHandler(io);
+
+// Generate route map
 routeMap(app);
+
+// Load predefined data if hasn't already
+predefinedDataLoader();
