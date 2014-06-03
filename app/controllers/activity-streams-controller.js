@@ -22,7 +22,7 @@ var activityStream = {
                         published: published,
                         actor: {
                             id: userID,
-                            name: user.name
+                            displayName: user.name
                         },
                         object: object
                     }),
