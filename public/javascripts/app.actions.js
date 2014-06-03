@@ -20,7 +20,7 @@ var app = (function($, module) {
                     if (data.success) {
                         activity.actor = {
                             id: app.common.userID,
-                            name: app.common.userName
+                            displayName: app.common.userName
                         };
                         activity._id = data.activityID;
                         app.activityStreams.prependActivity(app.common.myActivityStreamsArea, activity, app.common.myActivityStreamsArea.find("tr").size());
@@ -44,19 +44,12 @@ var app = (function($, module) {
             var objectName = app.common.objectName.val();
             objectName = objectName.replace(/\\/gm, "\\").replace(/"/gm, "\"");
             if (objectName !== "") {
-                var obj = asms.Activity({
-                    verb: 'post',
-                    actor: 'acct:joe@example.org',
-                    object: 'http://example.org/notes/1',
-                    testField: "ololo"
-                });
-
                 var activityObj = asms.Activity({
                         "verb": verb,
-                        "published": new Date(),
+                        "published": new Date().toISOString(),
                         "object": {
-                            "type": objectType,
-                            "name": objectName
+                            "objectType": objectType,
+                            "displayName": objectName
                         }
                     }),
                     activity = activityObj.__wrapped__;

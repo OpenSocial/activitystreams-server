@@ -20,7 +20,7 @@ var app = (function($, module) {
                     if (data.success) {
                         activity.actor = {
                             id: app.common.userID,
-                            name: app.common.userName
+                            displayName: app.common.userName
                         };
                         activity._id = data.activityID;
                         app.activityStreams.prependActivity(app.common.myActivityStreamsArea, activity, app.common.myActivityStreamsArea.find("tr").size());
@@ -44,19 +44,12 @@ var app = (function($, module) {
             var objectName = app.common.objectName.val();
             objectName = objectName.replace(/\\/gm, "\\").replace(/"/gm, "\"");
             if (objectName !== "") {
-                var obj = asms.Activity({
-                    verb: 'post',
-                    actor: 'acct:joe@example.org',
-                    object: 'http://example.org/notes/1',
-                    testField: "ololo"
-                });
-
                 var activityObj = asms.Activity({
                         "verb": verb,
-                        "published": new Date(),
+                        "published": new Date().toISOString(),
                         "object": {
-                            "type": objectType,
-                            "name": objectName
+                            "objectType": objectType,
+                            "displayName": objectName
                         }
                     }),
                     activity = activityObj.__wrapped__;
@@ -142,13 +135,13 @@ var app = (function($, module) {
         }
 
         var html =  "<tr class='success'><input type='hidden' id='actorID" + index + "' value='" + activity.actor.id + "'><td><div class='row'>" +
-                    "<div class='col-md-1'><span class='glyphicon " + app.dictionary.objectTypes[activity.object.type] + "'></span></div>" +
-                    "<div class='col-md-2'><small><abbr class='timeago' title='" + new Date(activity.published).toISOString() + "'></abbr></small></div>" +
+                    "<div class='col-md-1'><span class='glyphicon " + app.dictionary.objectTypes[activity.object.objectType] + "'></span></div>" +
+                    "<div class='col-md-2'><small><abbr class='timeago' title='" + activity.published + "'></abbr></small></div>" +
                     "<div class='col-md-9'>" +
-                    "<strong>" + activity.actor.name + "</strong> " +
+                    "<strong>" + activity.actor.displayName + "</strong> " +
                     app.dictionary.verbs[activity.verb] + " " +
-                    "<strong>" + activity.object.type + "</strong> " +
-                    "\"" + activity.object.name + "\"" +
+                    "<strong>" + activity.object.objectType + "</strong> " +
+                    "\"" + activity.object.displayName + "\"" +
                     "</div>" +
                     "</div></td></tr>";
         area.prepend(html);

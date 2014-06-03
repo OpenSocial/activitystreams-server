@@ -1,3 +1,13 @@
+//- BEGIN of Mixins
+mixin renderButton(id, className, label)
+    .row
+        .col-md-12
+            button.btn.btn-success.btn-lg.btn-block(id=id)
+                span.glyphicon(class=className)
+                span!= "&nbsp;" + label
+
+//- END of Mixins
+
 extends layouts/default
 
 block content
@@ -32,41 +42,17 @@ block content
                     .panel-body
                         .alert.alert-danger.hidden
                             span#actionsErrorArea
-                        .row
-                            .col-md-12
-                                button#postPhoto.btn.btn-success.btn-lg.btn-block
-                                    span.glyphicon.glyphicon-picture
-                                    span &nbsp;Post a photo
+                        +renderButton("postPhoto", "glyphicon-picture", "Post a photo")
                         br
-                        .row
-                            .col-md-12
-                                button#postVideo.btn.btn-success.btn-lg.btn-block
-                                    span.glyphicon.glyphicon-facetime-video
-                                    span &nbsp;Post a video
+                        +renderButton("postVideo", "glyphicon-facetime-video", "Post a video")
                         br
-                        .row
-                            .col-md-12
-                                button#postNote.btn.btn-success.btn-lg.btn-block
-                                    span.glyphicon.glyphicon-edit
-                                    span &nbsp;Post a note
+                        +renderButton("postNote", "glyphicon-edit", "Post a note")
                         br
-                        .row
-                            .col-md-12
-                                button#recommendPlace.btn.btn-success.btn-lg.btn-block
-                                    span.glyphicon.glyphicon-map-marker
-                                    span &nbsp;Recommend a place
+                        +renderButton("recommendPlace", "glyphicon-map-marker", "Recommend a place")
                         br
-                        .row
-                            .col-md-12
-                                button#postAudio.btn.btn-success.btn-lg.btn-block
-                                    span.glyphicon.glyphicon-music
-                                    span &nbsp;Post an audio
+                        +renderButton("postAudio", "glyphicon-music", "Post an audio")
                         br
-                        .row
-                            .col-md-12
-                                button#addLike.btn.btn-success.btn-lg.btn-block
-                                    span.glyphicon.glyphicon-heart
-                                    span &nbsp;Add like
+                        +renderButton("addLike", "glyphicon-heart", "Add like")
             //- ACTIVITY STREAMS block
             .col-md-6
                 .panel.panel-primary
@@ -120,6 +106,7 @@ block content
                                                     span.glyphicon.glyphicon-plus
 
 block custom-scripts
+    script(src="/socket.io/socket.io.js")
     script(src=path + "/assets/jquery-timeago/js/jquery.timeago.js")
     script(src=path + "/assets/activitystreams/js/activitystreams.js")
     script(src=path + "/javascripts/prod/app.prod.min.js")

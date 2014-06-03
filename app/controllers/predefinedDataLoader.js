@@ -17,7 +17,6 @@ module.exports = function() {
 
                 for (i = 0, l = predefinedActivityStreams.length; i < l; i++) {
                     var activityStream = predefinedActivityStreams[i];
-                    activityStream._id = new ObjectID(activityStream._id);
                     activityStreamsModel.add(activityStream, function() {});
                 }
             }

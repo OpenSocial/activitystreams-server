@@ -21,13 +21,13 @@ var app = (function($, module) {
         }
 
         var html =  "<tr class='success'><input type='hidden' id='actorID" + index + "' value='" + activity.actor.id + "'><td><div class='row'>" +
-                    "<div class='col-md-1'><span class='glyphicon " + app.dictionary.objectTypes[activity.object.type] + "'></span></div>" +
-                    "<div class='col-md-2'><small><abbr class='timeago' title='" + new Date(activity.published).toISOString() + "'></abbr></small></div>" +
+                    "<div class='col-md-1'><span class='glyphicon " + app.dictionary.objectTypes[activity.object.objectType] + "'></span></div>" +
+                    "<div class='col-md-2'><small><abbr class='timeago' title='" + activity.published + "'></abbr></small></div>" +
                     "<div class='col-md-9'>" +
-                    "<strong>" + activity.actor.name + "</strong> " +
+                    "<strong>" + activity.actor.displayName + "</strong> " +
                     app.dictionary.verbs[activity.verb] + " " +
-                    "<strong>" + activity.object.type + "</strong> " +
-                    "\"" + activity.object.name + "\"" +
+                    "<strong>" + activity.object.objectType + "</strong> " +
+                    "\"" + activity.object.displayName + "\"" +
                     "</div>" +
                     "</div></td></tr>";
         area.prepend(html);
