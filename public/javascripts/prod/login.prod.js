@@ -3,10 +3,11 @@
         id: null,
         create: function() {
             var username = $("#username").val(),
-                errorArea = $("#errorInfo");
+                errorArea = $("#errorInfo"),
+                usernamePattern = /^[0-9a-zA-Z_]+[0-9a-zA-Z_\s]*$/;
 
-            if (username === "") {
-                errorArea.text("User name cannot be empty.").parent().toggleClass("hidden");
+            if (!usernamePattern.test(username)) {
+                errorArea.text("User name cannot be empty and must contain letters, digits, underscores or spaces only.").parent().removeClass("hidden");
             } else {
                 $.ajax({
                     url: "/users/" + username,
@@ -16,11 +17,11 @@
                         if (data.success) {
                             user.id = data.userID;
                         } else {
-                            errorArea.text(data.error).parent().toggleClass("hidden");
+                            errorArea.text(data.error).parent().removeClass("hidden");
                         }
                     },
                     error: function() {
-                        errorArea.text("Unexpected error occured.").parent().toggleClass("hidden");
+                        errorArea.text("Unexpected error occured.").parent().removeClass("hidden");
                     }
                 });
             }

@@ -8,16 +8,15 @@ module.exports = function() {
     usersModel.getUsersCount(function(err, count) {
         if (!err) {
             if (count === 0) {
-                var i = 0, l = 0;
-                for (i = 0, l = predefinedUsers.length; i < l; i++) {
-                    var user = predefinedUsers[i];
+                for (var i1 = 0, l1 = predefinedUsers.length; i1 < l1; i1++) {
+                    var user = predefinedUsers[i1];
                     user._id = new ObjectID(user._id);
-                    usersModel.add(user, function() {});
+                    usersModel.add(user, function(){});
                 }
 
-                for (i = 0, l = predefinedActivityStreams.length; i < l; i++) {
-                    var activityStream = predefinedActivityStreams[i];
-                    activityStreamsModel.add(activityStream, function() {});
+                for (var i2 = 0, l2 = predefinedActivityStreams.length; i2 < l2; i2++) {
+                    var activityStream = predefinedActivityStreams[i2];
+                    activityStreamsModel.add(activityStream, function(){});
                 }
             }
         }

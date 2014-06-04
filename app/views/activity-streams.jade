@@ -87,23 +87,27 @@ block content
                             span#followingsErrorArea
                         table.table.table-hover
                             tbody
-                                each val, index in users
-                                    if loggedUser.followings.indexOf(String(val._id)) >= 0
-                                        tr.success(id="followingRow" + index)
-                                            td!= "<strong>" + val.name + "</strong>"
-                                            td
-                                                button.btn.btn-primary.btn-sm(id="follow" + index, title="Unfollow")
-                                                    input(type="hidden", id="followingID" + index, value=val._id)
-                                                    input(type="hidden", id="isFollowed"+ index, value="true")
-                                                    span.glyphicon.glyphicon-minus
-                                    else
-                                        tr.info(id="followingRow" + index)
-                                            td!= "<strong>" + val.name + "</strong>"
-                                            td
-                                                button.btn.btn-primary.btn-sm(id="follow" + index, title="Follow")
-                                                    input(type="hidden", id="followingID" + index, value=val._id)
-                                                    input(type="hidden", id="isFollowed" + index, value="false")
-                                                    span.glyphicon.glyphicon-plus
+                                if users.length > 0
+                                    each val, index in users
+                                        if loggedUser.followings.indexOf(String(val._id)) >= 0
+                                            tr.success(id="followingRow" + index)
+                                                td!= "<strong>" + val.name + "</strong>"
+                                                td
+                                                    button.btn.btn-primary.btn-sm(id="follow" + index, title="Unfollow")
+                                                        input(type="hidden", id="followingID" + index, value=val._id)
+                                                        input(type="hidden", id="isFollowed"+ index, value="true")
+                                                        span.glyphicon.glyphicon-minus
+                                        else
+                                            tr.info(id="followingRow" + index)
+                                                td!= "<strong>" + val.name + "</strong>"
+                                                td
+                                                    button.btn.btn-primary.btn-sm(id="follow" + index, title="Follow")
+                                                        input(type="hidden", id="followingID" + index, value=val._id)
+                                                        input(type="hidden", id="isFollowed" + index, value="false")
+                                                        span.glyphicon.glyphicon-plus
+                                else
+                                    tr
+                                        td Users list is empty
 
 block custom-scripts
     script(src="/socket.io/socket.io.js")

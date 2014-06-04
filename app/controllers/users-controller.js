@@ -59,8 +59,8 @@ var user = {
             if (!err) {
                 res.send({
                     "totalItems": results.totalItems,
-                    "followings": res.json(results.followings),
-                    "success": "Following has been successfully removed!"
+                    "followings": results.followings,
+                    "success": "Followings have been successfully retrieved!"
                 });
             } else {
                 res.send({
@@ -102,14 +102,12 @@ var user = {
                     if (!countErr) {
                         res.send({
                             "success": "Users list has been successfully retrieved!",
-                            "data": res.json({
-                                "totalItems": countUsers,
-                                "items": users
-                            })
+                            "totalItems": countUsers,
+                            "items": users
                         });
                     } else {
                         res.send({
-                            "error": err.message
+                            "error": countErr.message
                         });
                     }
                 });
