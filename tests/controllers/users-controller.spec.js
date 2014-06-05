@@ -3,7 +3,21 @@ describe("Users controller", function() {
         userID,
         followingID,
         userName = "John Doe",
-        anotherUserName = "John Doe 2";
+        anotherUserName = "John Doe 2",
+        config = require("../../libs/config"),
+        connectionString = config.get('mongodb:uri'),
+        MongoClient = require('mongodb').MongoClient;
+
+    it("connects to the database", function(done) {
+        MongoClient.connect(connectionString, function(connectionError, database) {
+            if (connectionError) {
+                expect(true).toBeFalsy();
+            } else {
+                global.activitystreamsDB = database;
+            }
+            done();
+        });
+    });
 
     it("adds user to the database via controller", function(done) {
         var req = {}, res = {};
@@ -53,9 +67,6 @@ describe("Users controller", function() {
             expect(response.success).toBeDefined();
             done();
         };
-        res.json = function(data) {
-            return data;
-        };
         usersController.getFollowings(req, res);
     });
 
@@ -82,9 +93,6 @@ describe("Users controller", function() {
             expect(response.success).toBeDefined();
             done();
         };
-        res.json = function(data) {
-            return data;
-        };
         usersController.getUsers(req, res);
     });
 
@@ -101,7 +109,7 @@ describe("Users controller", function() {
             };
             res2.send = function(response2) {
                 done();
-            }
+            };
             usersController.removeUser(req2, res2);
         };
         usersController.removeUser(req, res);

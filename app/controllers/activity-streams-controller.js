@@ -87,11 +87,12 @@ var activityStream = {
                    if (!countErr) {
                        res.send({
                            "success": "Activity list has been successfully retrieved!",
-                           "data": res.json({"totalItems": totalItems, "items": activities})
+                           "totalItems": totalItems,
+                           "items": activities
                        });
                    } else {
                        res.send({
-                           "error": err.message
+                           "error": countErr.message
                        });
                    }
                });

@@ -9,9 +9,13 @@ var viewsRenderer = {
      */
     error404: function(req, res) {
         res.status(404);
+        var path = req.protocol + "://" + req.host;
+        if (!process.env.VCAP_SERVICES) {
+            path += ":" + port;
+        }
         res.render("../views/404",
            {
-               path: req.protocol + "://" + req.host + ":" + port,
+               path: path,
                title: "404: File Not Found"
            }
         );
@@ -22,9 +26,13 @@ var viewsRenderer = {
      */
     error500: function(req, res, error) {
         res.status(500);
+        var path = req.protocol + "://" + req.host;
+        if (!process.env.VCAP_SERVICES) {
+            path += ":" + port;
+        }
         res.render("../views/500",
             {
-                path: req.protocol + "://" + req.host + ":" + port,
+                path: path,
                 title: "500: Internal Server Error",
                 error: error
             }
@@ -35,6 +43,10 @@ var viewsRenderer = {
      * @description Login page renderer
      */
     login: function(req, res) {
+        var path = req.protocol + "://" + req.host;
+        if (!process.env.VCAP_SERVICES) {
+            path += ":" + port;
+        }
         usersModel.getUsers(0, "@all", function(err, results) {
             if (!err) {
                 res.render("../views/login",
@@ -42,14 +54,15 @@ var viewsRenderer = {
                         users: results,
                         usersToShow: 18,
                         usersPerLine: 6,
-                        path: req.protocol + "://" + req.host + ":" + port,
+                        path: path,
                         welcomeMessage: "Please, introduce yourself..."
                     }
                 );
             } else {
                 res.render("../views/error",
                     {
-                        error: err.message
+                        error: err.message,
+                        path: path
                     }
                 );
             }
@@ -61,6 +74,10 @@ var viewsRenderer = {
      */
     activityStreams: function(req, res) {
         var view = req.query.view === "true";
+        var path = req.protocol + "://" + req.host;
+        if (!process.env.VCAP_SERVICES) {
+            path += ":" + port;
+        }
 
         // Return the data without view rendering
         if (!view) {
@@ -79,7 +96,7 @@ var viewsRenderer = {
                             });
                         } else {
                             res.send({
-                                "error": err.message
+                                "error": countErr.message
                             });
                         }
                     });
@@ -108,7 +125,7 @@ var viewsRenderer = {
                             res.render("../views/activity-streams",
                                 {
                                     users: users,
-                                    path: req.protocol + "://" + req.host + ":" + port,
+                                    path: path,
                                     loggedUser: user
                                 }
                             );
@@ -118,7 +135,8 @@ var viewsRenderer = {
                         } else {
                             res.render("../views/error",
                                 {
-                                    error: innerError.message
+                                    error: innerError.message,
+                                    path: path
                                 }
                             );
                         }
@@ -126,7 +144,8 @@ var viewsRenderer = {
                 } else {
                     res.render("../views/error",
                         {
-                            error: err.message
+                            error: err.message,
+                            path: path
                         }
                     );
                 }

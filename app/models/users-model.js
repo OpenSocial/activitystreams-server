@@ -2,10 +2,7 @@
  * @description Users DAO
  */
 
-var MongoClient = require('mongodb').MongoClient,
-    config = require('../../libs/config'),
-    connectionString = config.get('mongodb:uri'),
-    ObjectID = require('mongodb').ObjectID;
+var ObjectID = require('mongodb').ObjectID;
 
 var DAO = {
     /*
@@ -13,31 +10,28 @@ var DAO = {
      * @param user User to add
      */
     add: function(user, callback) {
-        MongoClient.connect(connectionString, function(connectionError, db) {
-            if (connectionError) {
-                callback(new Error("Database connection error"), null);
-            } else {
-                db.collection("users").findOne(
-                    {
-                        name: user.name
-                    },
-                    function(searchError, result) {
-                        if (result) {
-                            callback(new Error("User " + user.name + " already exists"), null);
-                        } else {
-                            db.collection("users").insert(user, function(insertError, user) {
-                                if (insertError) {
-                                    callback(new Error("User insert error"), null);
-                                } else {
-                                    callback(null, user[0]._id);
-                                }
-                                db.close();
-                            });
-                        }
+        activitystreamsDB.collection("users").findOne(
+            {
+                name: user.name
+            },
+            function(searchError, result) {
+                if (searchError) {
+                    callback(new Error("User search error"), null);
+                } else {
+                    if (result) {
+                        callback(new Error("User " + user.name + " already exists"), null);
+                    } else {
+                        activitystreamsDB.collection("users").insert(user, function(insertError, user) {
+                            if (insertError) {
+                                callback(new Error("User insert error"), null);
+                            } else {
+                                callback(null, user[0]._id);
+                            }
+                        });
                     }
-                );
+                }
             }
-        });
+        );
     },
 
     /*
@@ -46,43 +40,40 @@ var DAO = {
      * @param followingID Following to add
      */
     addFollowing: function(userID, followingID, callback) {
-        MongoClient.connect(connectionString, function(connectionError, db) {
-            if (connectionError) {
-                callback(new Error("Database connection error"), null);
-            } else {
-                // Find the user to add following to
-               db.collection("users").update(
-                    {
-                        _id: new ObjectID(userID)
-                    },
-                    {
-                        $addToSet: {followings: followingID}
-                    },
-                    function(followingsUpdateError) {
-                        if (followingsUpdateError) {
-                            callback(new Error("Followings update error"), null);
-                        } else {
-                            db.collection("users").update(
-                                {
-                                    _id: new ObjectID(followingID)
-                                },
-                                {
-                                    $addToSet: {followers: userID}
-                                },
-                                function(followersUpdateError) {
-                                    if (followersUpdateError) {
-                                        callback(new Error("Followers update error"), null);
-                                    } else {
-                                        callback(null, true);
-                                    }
-                                    db.close();
+        try {
+            // Find the user to add following to
+            activitystreamsDB.collection("users").update(
+                {
+                    _id: new ObjectID(userID)
+                },
+                {
+                    $addToSet: {followings: followingID}
+                },
+                function(followingsUpdateError) {
+                    if (followingsUpdateError) {
+                        callback(new Error("Followings update error"), null);
+                    } else {
+                        activitystreamsDB.collection("users").update(
+                            {
+                                _id: new ObjectID(followingID)
+                            },
+                            {
+                                $addToSet: {followers: userID}
+                            },
+                            function(followersUpdateError) {
+                                if (followersUpdateError) {
+                                    callback(new Error("Followers update error"), null);
+                                } else {
+                                    callback(null, true);
                                 }
-                            );
-                        }
+                            }
+                        );
                     }
-                );
-            }
-        });
+                }
+            );
+        } catch (e) {
+            callback(new Error(e.message), null);
+        }
     },
 
     /*
@@ -91,44 +82,41 @@ var DAO = {
      * @param followingID Following to remove
      */
     removeFollowing: function(userID, followingID, callback) {
-        MongoClient.connect(connectionString, function(connectionError, db) {
-            if (connectionError) {
-                callback(new Error("Database connection error"), null);
-            } else {
-                // Find the user to remove following from
-                db.collection("users").update(
-                    {
-                        _id: new ObjectID(userID)
-                    },
-                    {
-                        $pull: {followings: followingID}
-                    },
-                    function(followingsRemoveError) {
-                        if (followingsRemoveError) {
-                            callback(new Error("Following remove error"), null);
-                        } else {
-                            // Find the user to remove follower from
-                            db.collection("users").update(
-                                {
-                                    _id: new ObjectID(followingID)
-                                },
-                                {
-                                    $pull: {followers: userID}
-                                },
-                                function(followersUpdateError) {
-                                    if (followersUpdateError) {
-                                        callback(new Error("Follower remove error"), null);
-                                    } else {
-                                        callback(null, true);
-                                    }
-                                    db.close();
+        try {
+            // Find the user to remove following from
+            activitystreamsDB.collection("users").update(
+                {
+                    _id: new ObjectID(userID)
+                },
+                {
+                    $pull: {followings: followingID}
+                },
+                function(followingsRemoveError) {
+                    if (followingsRemoveError) {
+                        callback(new Error("Following remove error"), null);
+                    } else {
+                        // Find the user to remove follower from
+                        activitystreamsDB.collection("users").update(
+                            {
+                                _id: new ObjectID(followingID)
+                            },
+                            {
+                                $pull: {followers: userID}
+                            },
+                            function(followersUpdateError) {
+                                if (followersUpdateError) {
+                                    callback(new Error("Follower remove error"), null);
+                                } else {
+                                    callback(null, true);
                                 }
-                            );
-                        }
+                            }
+                        );
                     }
-                );
-            }
-        });
+                }
+            );
+        } catch (e) {
+            callback(new Error(e.message), null);
+        }
     },
 
     /*
@@ -138,20 +126,20 @@ var DAO = {
      * @param count Number of documents to get (paging purposes). Default: @all
      */
     getFollowings: function(userID, offset, count, callback) {
-        MongoClient.connect(connectionString, function(connectionError, db) {
-            if (connectionError) {
-                callback(new Error("Database connection error"), null);
-            } else {
-                offset = offset ? offset : 0;
-                count = count ? count : "@all";
+        try {
+            offset = offset || 0;
+            count = count || "@all";
 
-                db.collection("users").findOne(
-                    {
-                        _id: new ObjectID(userID)
-                    },
-                    function(getError, result) {
-                        if (getError) {
-                            callback(new Error("Followings retrieving error"), null);
+            activitystreamsDB.collection("users").findOne(
+                {
+                    _id: new ObjectID(userID)
+                },
+                function(getError, result) {
+                    if (getError) {
+                        callback(new Error("Followings retrieving error"), null);
+                    } else {
+                        if (!result) {
+                            callback(null, {followings: [], totalItems: 0});
                         } else {
                             var followingsToReturn = [];
                             if (count === "@all") {
@@ -164,11 +152,12 @@ var DAO = {
 
                             callback(null, {followings: followingsToReturn, totalItems: result.followings.length});
                         }
-                        db.close();
                     }
-                );
-            }
-        });
+                }
+            );
+        } catch (e) {
+            callback(new Error(e.message), null);
+        }
     },
 
     /*
@@ -176,25 +165,26 @@ var DAO = {
      * @param userID The ID to search user by
      */
     getUser: function(userID, callback) {
-        MongoClient.connect(connectionString, function(connectionError, db) {
-            if (connectionError) {
-                callback(new Error("Database connection error"), null);
-            } else {
-                db.collection("users").findOne(
-                    {
-                        _id: new ObjectID(userID)
-                    },
-                    function(getError, result) {
-                        if (getError) {
-                            callback(new Error("Users retrieving error"), null);
+        try {
+            activitystreamsDB.collection("users").findOne(
+                {
+                    _id: new ObjectID(userID)
+                },
+                function(getError, result) {
+                    if (getError) {
+                        callback(new Error("Users retrieving error"), null);
+                    } else {
+                        if (!result) {
+                            callback(new Error("No such a user found"), null);
                         } else {
                             callback(null, result);
                         }
-                        db.close();
                     }
-                );
-            }
-        });
+                }
+            );
+        } catch (e) {
+            callback(new Error(e.message), null);
+        }
     },
 
     /*
@@ -203,53 +193,51 @@ var DAO = {
      * @param count Number of documents to get (paging purposes). Specail value: "@all" to get all the users
      */
     getUsers: function(offset, count, callback) {
-        MongoClient.connect(connectionString, function(connectionError, db) {
-            if (connectionError) {
-                callback(new Error("Database connection error"), null);
-            } else {
-                var options = {
-                    sort: [["name", 1]]
-                };
-                if (count !== "@all") {
-                    options.skip = offset;
-                    options.limit = count;
-                }
+        var options = {
+            sort: {name: 1}
+        };
 
-                db.collection("users").find({}, options).toArray(
-                    function(getError, result) {
-                        if (getError) {
-                            callback(new Error("Users retrieving error"), null);
-                        } else {
-                            callback(null, result);
-                        }
-                        db.close();
+        offset = offset || 0;
+        count = count || "@all";
+
+        if (count !== "@all") {
+            options.skip = offset;
+            options.limit = count;
+        }
+
+        activitystreamsDB.collection("users").find({}, options).toArray(
+            function(getError, result) {
+                if (getError) {
+                    callback(new Error("Users retrieving error"), null);
+                } else {
+                    if (!result) {
+                        callback(null, []);
+                    } else {
+                        callback(null, result);
                     }
-                );
+                }
             }
-        });
+        );
     },
 
     /*
      * @description Get the users count
      */
     getUsersCount: function(callback) {
-        MongoClient.connect(connectionString, function(connectionError, db) {
-            if (connectionError) {
-                callback(new Error("Database connection error"), null);
-            } else {
-                db.collection("users").count(
-                    {},
-                    function(getError, result) {
-                        if (getError) {
-                            callback(new Error("Users count retrieving error"), null);
-                        } else {
-                            callback(null, result);
-                        }
-                        db.close();
+        activitystreamsDB.collection("users").count(
+            {},
+            function(getError, result) {
+                if (getError) {
+                    callback(new Error("Users count retrieving error"), null);
+                } else {
+                    if (!result) {
+                        callback(null, 0);
+                    } else {
+                        callback(null, result);
                     }
-                );
+                }
             }
-        });
+        );
     },
 
     /*
@@ -257,26 +245,23 @@ var DAO = {
      * @param userID User to remove
      */
     removeUser: function(userID, callback) {
-        MongoClient.connect(connectionString, function(connectionError, db) {
-            if (connectionError) {
-                callback(new Error("Database connection error"), null);
-            } else {
-                // Find the user to remove
-                db.collection("users").remove(
-                    {
-                        _id: new ObjectID(userID)
-                    },
-                    function(userRemoveError) {
-                        if (userRemoveError) {
-                            callback(new Error("User remove error"), null);
-                        } else {
-                            callback(null, true);
-                        }
-                        db.close();
+        try {
+            // Find the user to remove
+            activitystreamsDB.collection("users").remove(
+                {
+                    _id: new ObjectID(userID)
+                },
+                function(userRemoveError) {
+                    if (userRemoveError) {
+                        callback(new Error("User remove error"), null);
+                    } else {
+                        callback(null, true);
                     }
-                );
-            }
-        });
+                }
+            );
+        } catch (e) {
+            callback(new Error(e.message), null);
+        }
     }
 };
 

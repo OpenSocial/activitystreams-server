@@ -11,7 +11,22 @@ describe("Users model (DAO)", function() {
             name: "John Doe 2",
             followings: [],
             followers: []
-        };
+        },
+        config = require("../../libs/config"),
+        connectionString = config.get('mongodb:uri'),
+        MongoClient = require('mongodb').MongoClient;
+
+    it("connects to the database", function(done) {
+        MongoClient.connect(connectionString, function(connectionError, database) {
+            if (connectionError) {
+                expect(true).toBeFalsy();
+            } else {
+                global.activitystreamsDB = database;
+
+            }
+        });
+        done();
+    });
 
     it("adds user to the database", function(done) {
         usersModel.add(user, function(err, data) {
