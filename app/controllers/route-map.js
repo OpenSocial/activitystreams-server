@@ -1,6 +1,7 @@
 var activityStreamsController = require("./activity-streams-controller"),
     usersController = require("./users-controller"),
-    viewsController = require("./views-controller");
+    viewsController = require("./views-controller"),
+    apiController = require("./api-controller");
 
 /*
  * @description Define the route map
@@ -30,6 +31,14 @@ var map = {
                     "delete": usersController.removeFollowing
                 }
             }
+        }
+    },
+    "/api": {
+        "/see": {
+            "get": apiController.see
+        },
+        "/share": {
+            "get": apiController.share
         }
     }
 };

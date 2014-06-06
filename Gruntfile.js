@@ -5,9 +5,6 @@ module.exports = function(grunt) {
         pkg: grunt.file.readJSON("package.json"),
 
         concat: {
-            options: {
-                separator: ";"
-            },
             login: {
                 src: ["public/javascripts/login.js"],
                 dest: "public/javascripts/prod/login.prod.js"

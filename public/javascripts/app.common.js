@@ -4,26 +4,40 @@ var app = (function($, module) {
      * @description Common data (values, DOM objects, etc.) to work with
      */
     module.common = {
+        // Logged user info
         socket: null,
         userID: null,
         userName: null,
         path: null,
         followings: [],
+
+        // DOM areas
+        myActivityStreamsArea: null,
+        followingsActivityStreamsArea: null,
+
+        // Error areas
         followingsErrorArea: null,
         actionsErrorArea: null,
+        nameDialogErrorArea: null,
+        activityStreamsErrorArea: null,
+
+        // HTML Elements
         nameDialog: null,
         nameDialogLabel: null,
         objectName: null,
         objectImage: null,
         addActivityButton: null,
-        nameDialogErrorArea: null,
-        activityStreamsErrorArea: null,
-        myActivityStreamsArea: null,
+
+        // Counters
         myActivityStreamsAreaCount: 0,
-        followingsActivityStreamsArea: null,
         followingsActivityStreamsAreaCount: 0,
+
+        // Constants
         emptyActivityStreamsAreaHTML: "<tr><td>Activity list is empty</td></tr>",
+
+        // Methods
         init: function() {
+            // Logged user info
             this.userID = $("#loggedUserID").val();
             this.userName = $("#loggedUserName").val();
             this.path = $("#path").val();
@@ -31,18 +45,24 @@ var app = (function($, module) {
             if (loggedUserFollowings !== "") {
                 this.followings = String(loggedUserFollowings).split(",");
             }
-            this.followingsErrorArea = $("#followingsErrorArea");
-            this.actionsErrorArea = $("#actionsErrorArea");
+
+            // DOM areas
+            this.myActivityStreamsArea = $("#myActivityStreams");
+            this.followingsActivityStreamsArea = $("#friendsActivityStreams");
+
+            // HTML elements
             this.nameDialog = $("#nameDialog");
             this.nameDialogLabel = $("#nameDialogLabel");
-            this.objectType = $("#objectType");
             this.objectName = $("#objectName");
             this.objectImage = $("#objectImage");
             this.addActivityButton = $("#addActivity");
+
+            // Error areas
             this.nameDialogErrorArea = $("#nameDialogErrorArea");
             this.activityStreamsErrorArea = $("#activityStreamsErrorArea");
-            this.myActivityStreamsArea = $("#myActivityStreams");
-            this.followingsActivityStreamsArea = $("#friendsActivityStreams");
+            this.followingsErrorArea = $("#followingsErrorArea");
+            this.actionsErrorArea = $("#actionsErrorArea");
+
             this.socket = io.connect(this.path);
         }
     };
