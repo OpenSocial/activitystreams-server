@@ -17,6 +17,7 @@ var app = (function($, module) {
                 type: type,
                 success: function(data) {
                     if (data.success) {
+                        app.common.followingsErrorArea.parent().addClass("hidden");
 
                         // The following has been deleted
                         if (isFollowed) {
@@ -45,11 +46,11 @@ var app = (function($, module) {
                         followButton.find("span").toggleClass("glyphicon-plus").toggleClass("glyphicon-minus");
                         followingRow.toggleClass("info").toggleClass("success");
                     } else {
-                        app.common.followingsErrorArea.text(data.error).parent().toggleClass("hidden");
+                        app.common.followingsErrorArea.text(data.error).parent().removeClass("hidden");
                     }
                 },
                 error: function() {
-                    app.common.followingsErrorArea.text("Unexpected error occured.").parent().toggleClass("hidden");
+                    app.common.followingsErrorArea.text("Unexpected error occured.").parent().removeClass("hidden");
                 }
             });
         }

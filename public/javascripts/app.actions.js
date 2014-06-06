@@ -18,6 +18,7 @@ var app = (function($, module) {
                 data: activity,
                 success: function(data) {
                     if (data.success) {
+                        app.common.actionsErrorArea.parent().addClass("hidden");
                         activity.actor = {
                             id: app.common.userID,
                             displayName: app.common.userName
@@ -26,11 +27,11 @@ var app = (function($, module) {
                         app.activityStreams.prependActivity(app.common.myActivityStreamsArea, activity, app.common.myActivityStreamsArea.find("tr").size());
                         app.common.socket.emit("userAddedActivity", app.common.userID, activity);
                     } else {
-                        app.common.actionsErrorArea.text(data.error).parent().toggleClass("hidden");
+                        app.common.actionsErrorArea.text(data.error).parent().removeClass("hidden");
                     }
                 },
                 error: function() {
-                    app.common.actionsErrorArea.text("Unexpected error occured.").parent().toggleClass("hidden");
+                    app.common.actionsErrorArea.text("Unexpected error occured.").parent().removeClass("hidden");
                 }
             });
         };

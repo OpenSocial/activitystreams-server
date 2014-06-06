@@ -3,6 +3,9 @@
         // Common data initialization
         app.common.init();
 
+        // Dictionary initialization
+        app.dictionary.init();
+
         // Socket events
         app.common.socket.on("clientConnected", function() {
             app.common.socket.emit("clientSendsData", app.common.userID);

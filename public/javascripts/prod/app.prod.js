@@ -18,6 +18,7 @@ var app = (function($, module) {
                 data: activity,
                 success: function(data) {
                     if (data.success) {
+                        app.common.actionsErrorArea.parent().addClass("hidden");
                         activity.actor = {
                             id: app.common.userID,
                             displayName: app.common.userName
@@ -26,11 +27,11 @@ var app = (function($, module) {
                         app.activityStreams.prependActivity(app.common.myActivityStreamsArea, activity, app.common.myActivityStreamsArea.find("tr").size());
                         app.common.socket.emit("userAddedActivity", app.common.userID, activity);
                     } else {
-                        app.common.actionsErrorArea.text(data.error).parent().toggleClass("hidden");
+                        app.common.actionsErrorArea.text(data.error).parent().removeClass("hidden");
                     }
                 },
                 error: function() {
-                    app.common.actionsErrorArea.text("Unexpected error occured.").parent().toggleClass("hidden");
+                    app.common.actionsErrorArea.text("Unexpected error occured.").parent().removeClass("hidden");
                 }
             });
         };
@@ -112,10 +113,37 @@ var app = (function($, module) {
 
     return module;
 })(jQuery, app || {});
-;var app = (function($, module) {
+
+var app = (function($, module) {
+    /*
+     * @description Make an action on the activity
+     */
+    var performAction = function() {
+        var actionText = $(this).text(),
+            action = app.dictionary.actions[actionText];
+
+        $.ajax({
+            url: action.url,
+            type: action.method,
+            data: {
+                action: actionText
+            },
+            success: function(data) {
+                if (data.success) {
+                    app.common.activityStreamsErrorArea.parent().addClass("hidden");
+                    $.bootstrapGrowl(data.success, {type: "success"});
+                } else {
+                    app.common.activityStreamsErrorArea.text(data.error).parent().removeClass("hidden");
+                }
+            },
+            error: function() {
+                app.common.activityStreamsErrorArea.text("Unexpected error occured.").parent().removeClass("hidden");
+            }
+        });
+    };
 
     /*
-     * @description Append one activity to the stream
+     * @description Prepend one activity to the stream
      * @param area jQuery DOM wrapped area to append to
      * @param activity Activity to append
      * @param index Index of the activity in the stream
@@ -134,21 +162,57 @@ var app = (function($, module) {
             app.common.followingsActivityStreamsAreaCount++;
         }
 
-        var html =  "<tr class='success'><input type='hidden' id='actorID" + index + "' value='" + activity.actor.id + "'><td><div class='row'>" +
-                    "<div class='col-md-1'><span class='glyphicon " + app.dictionary.objectTypes[activity.object.objectType] + "'></span></div>" +
-                    "<div class='col-md-2'><small><abbr class='timeago' title='" + activity.published + "'></abbr></small></div>" +
-                    "<div class='col-md-9'>" +
-                    "<strong>" + activity.actor.displayName + "</strong> " +
-                    app.dictionary.verbs[activity.verb] + " " +
-                    "<strong>" + activity.object.objectType + "</strong> " +
-                    "\"" + activity.object.displayName + "\"" +
-                    "</div>" +
-                    "</div></td></tr>";
+        var html =  "<tr class='success'>" +
+                        "<input type='hidden' id='actorID" + index + "' value='" + activity.actor.id + "'>" +
+                        "<td>" +
+                            "<div class='row'>" +
+                                "<div class='col-md-1'>" +
+                                    "<span class='glyphicon " + app.dictionary.objectTypes[activity.object.objectType] + "'></span>" +
+                                "</div>" +
+                                "<div class='col-md-3'>" +
+                                    "<small><abbr class='timeago' title='" + activity.published + "'></abbr></small>" +
+                                "</div>" +
+                                "<div class='col-md-8'>" +
+                                    "<strong>" + activity.actor.displayName + "</strong> " +
+                                    app.dictionary.verbs[activity.verb] + " " +
+                                    "<strong>" + activity.object.objectType + "</strong> " +
+                                    "\"" + activity.object.displayName + "\"" +
+                                "</div>" +
+                            "</div>";
+
+        // Building the actions
+        var actions = app.dictionary.actions,
+            action;
+        if (!$.isEmptyObject(actions)) {
+            html += "<div class='row'>" +
+                    "<div class='col-md-8 col-md-offset-4'>" +
+                    "<div class='pull-right'>";
+
+            for (action in actions) {
+                if (actions.hasOwnProperty(action)) {
+                    html += "<button type='button' id='" + action + "ActionHandler" + index + "' class='btn btn-primary btn-xs'>" + action + "</button>&nbsp;";
+                }
+            }
+
+            html += "</div></div></div>";
+        }
+
+        html += "</td></tr>";
         area.prepend(html);
         setTimeout(function() {
             $("input[id='actorID" + index + "']").parent().removeClass("success");
         }, 3000);
+
+        // Event bindings
         $("abbr.timeago").timeago();
+
+        if (!$.isEmptyObject(actions)) {
+            for (action in actions) {
+                if (actions.hasOwnProperty(action)) {
+                    $("#" + action + "ActionHandler" + index).click(performAction);
+                }
+            }
+        }
     };
 
     /*
@@ -178,6 +242,7 @@ var app = (function($, module) {
                 type: "GET",
                 success: function(data) {
                     if (data.success) {
+                        app.common.activityStreamsErrorArea.parent().addClass("hidden");
                         if (data.items.length > 0) {
                             if (isInitial) {
                                 area.empty();
@@ -185,45 +250,59 @@ var app = (function($, module) {
                             renderActivityStreams(area, data);
                         }
                     } else {
-                        app.common.activityStreamsErrorArea.text(data.error).parent().toggleClass("hidden");
+                        app.common.activityStreamsErrorArea.text(data.error).parent().removeClass("hidden");
                     }
                 },
                 error: function() {
-                    app.common.activityStreamsErrorArea.text("Unexpected error occured.").parent().toggleClass("hidden");
+                    app.common.activityStreamsErrorArea.text("Unexpected error occured.").parent().removeClass("hidden");
                 }
             });
-
         }
     };
 
     return module;
 })(jQuery, app || {});
-;var app = (function($, module) {
+
+var app = (function($, module) {
 
     /*
      * @description Common data (values, DOM objects, etc.) to work with
      */
     module.common = {
+        // Logged user info
         socket: null,
         userID: null,
         userName: null,
         path: null,
         followings: [],
+
+        // DOM areas
+        myActivityStreamsArea: null,
+        followingsActivityStreamsArea: null,
+
+        // Error areas
         followingsErrorArea: null,
         actionsErrorArea: null,
+        nameDialogErrorArea: null,
+        activityStreamsErrorArea: null,
+
+        // HTML Elements
         nameDialog: null,
         nameDialogLabel: null,
         objectName: null,
         objectImage: null,
         addActivityButton: null,
-        nameDialogErrorArea: null,
-        activityStreamsErrorArea: null,
-        myActivityStreamsArea: null,
+
+        // Counters
         myActivityStreamsAreaCount: 0,
-        followingsActivityStreamsArea: null,
         followingsActivityStreamsAreaCount: 0,
+
+        // Constants
         emptyActivityStreamsAreaHTML: "<tr><td>Activity list is empty</td></tr>",
+
+        // Methods
         init: function() {
+            // Logged user info
             this.userID = $("#loggedUserID").val();
             this.userName = $("#loggedUserName").val();
             this.path = $("#path").val();
@@ -231,25 +310,32 @@ var app = (function($, module) {
             if (loggedUserFollowings !== "") {
                 this.followings = String(loggedUserFollowings).split(",");
             }
-            this.followingsErrorArea = $("#followingsErrorArea");
-            this.actionsErrorArea = $("#actionsErrorArea");
+
+            // DOM areas
+            this.myActivityStreamsArea = $("#myActivityStreams");
+            this.followingsActivityStreamsArea = $("#friendsActivityStreams");
+
+            // HTML elements
             this.nameDialog = $("#nameDialog");
             this.nameDialogLabel = $("#nameDialogLabel");
-            this.objectType = $("#objectType");
             this.objectName = $("#objectName");
             this.objectImage = $("#objectImage");
             this.addActivityButton = $("#addActivity");
+
+            // Error areas
             this.nameDialogErrorArea = $("#nameDialogErrorArea");
             this.activityStreamsErrorArea = $("#activityStreamsErrorArea");
-            this.myActivityStreamsArea = $("#myActivityStreams");
-            this.followingsActivityStreamsArea = $("#friendsActivityStreams");
+            this.followingsErrorArea = $("#followingsErrorArea");
+            this.actionsErrorArea = $("#actionsErrorArea");
+
             this.socket = io.connect(this.path);
         }
     };
 
     return module;
 })(jQuery, app || {});
-;var app = (function($, module) {
+
+var app = (function($, module) {
 
     /*
      * @description Dictionary - verbs, types, etc.
@@ -267,12 +353,40 @@ var app = (function($, module) {
             "place": "glyphicon-map-marker",
             "audio": "glyphicon-music",
             "like": "glyphicon-heart"
+        },
+        actionHandlers: {
+            httpActionHandler: "HttpActionHandler",
+            viewActionHandler: "ViewActionHandler",
+            embedActionHandler: "EmbedActionHandler",
+            intentActionHandler: "IntentActionHandler"
+        },
+        actions: {
+            see: {
+                objectType: "",
+                url: "/api/see",
+                method: "GET"
+            },
+            share: {
+                objectType: "",
+                url: "/api/share",
+                method: "GET"
+            }
+        },
+
+        init: function() {
+            for (var action in this.actions) {
+                if (this.actions.hasOwnProperty(action)) {
+                    this.actions[action].objectType = this.actionHandlers.httpActionHandler;
+                    this.actions[action].url = app.common.path + this.actions[action].url;
+                }
+            }
         }
     };
 
     return module;
 })(jQuery, app || {});
-;var app = (function($, module) {
+
+var app = (function($, module) {
 
     /*
      * @description Followings block functions
@@ -291,6 +405,7 @@ var app = (function($, module) {
                 type: type,
                 success: function(data) {
                     if (data.success) {
+                        app.common.followingsErrorArea.parent().addClass("hidden");
 
                         // The following has been deleted
                         if (isFollowed) {
@@ -319,11 +434,11 @@ var app = (function($, module) {
                         followButton.find("span").toggleClass("glyphicon-plus").toggleClass("glyphicon-minus");
                         followingRow.toggleClass("info").toggleClass("success");
                     } else {
-                        app.common.followingsErrorArea.text(data.error).parent().toggleClass("hidden");
+                        app.common.followingsErrorArea.text(data.error).parent().removeClass("hidden");
                     }
                 },
                 error: function() {
-                    app.common.followingsErrorArea.text("Unexpected error occured.").parent().toggleClass("hidden");
+                    app.common.followingsErrorArea.text("Unexpected error occured.").parent().removeClass("hidden");
                 }
             });
         }
@@ -331,10 +446,14 @@ var app = (function($, module) {
 
     return module;
 })(jQuery, app || {});
-;(function($) {
+
+(function($) {
     $(document).ready(function() {
         // Common data initialization
         app.common.init();
+
+        // Dictionary initialization
+        app.dictionary.init();
 
         // Socket events
         app.common.socket.on("clientConnected", function() {
