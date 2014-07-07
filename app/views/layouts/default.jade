@@ -7,7 +7,7 @@ html
         meta(charset="utf-8")
         meta(http-equiv="X-UA-Compatible", content="IE=edge")
         meta(name="viewport", content="width=device-width, initial-scale=1")
-        title Welcome to the Activity Stream Server Sandbox!
+        title OpenSocial Activity Streams 2.0 Sandbox
         link(rel="stylesheet", href=path + "/assets/bootstrap/css/bootstrap.min.css")
         // HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries
         +ie("if lt IE 9", "<script src='https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js'></script>")
@@ -15,21 +15,22 @@ html
         link(rel="stylesheet", href=path + "/stylesheets/prod/app.min.css")
         block custom-stylesheets
     body
-        .navbar.navbar-inverse.navbar-fixed-top(role="navigation")
-            .container
-                .navbar-header
-                    a.navbar-brand(href="/") Activity Streams Server Sandbox
-                    input(type="hidden", id="path", value=path)
+        .container
+            .navbar.navbar-header.navbar-fixed-top(role="navigation")
+                span.navbar-brand
+                    a(href="http://www.opensocial.org/")
+                        img(src="/images/os_logo.png")
+                    a(href="/") Activity Streams 2.0 Sandbox
+                input(type="hidden", id="path", value=path)
                 if loggedUser
                     input(type="hidden", id="loggedUserID", value=loggedUser._id)
                     input(type="hidden", id="loggedUserName", value=loggedUser.name)
                     p.navbar-text.navbar-right!= "Welcome, " + "<strong>" + loggedUser.name + "</strong>"
 
-        block content
+            block content
 
-        #footer
-            .container
-                p.text-muted Copyright (&copy;) 2014 International Business Machines & OpenSocial Foundation
+            #footer
+                p.small Copyright &copy; 2014 OpenSocial Foundation
 
         script(src=path + "/assets/jquery/js/jquery.min.js")
         script(src=path + "/assets/bootstrap/js/bootstrap.min.js")

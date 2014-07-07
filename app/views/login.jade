@@ -24,7 +24,7 @@ block content
     .container
         .panel.panel-success
             .panel-heading
-                h1.panel-title= welcomeMessage
+                h1.panel-title= addUserMsg
             .panel-body
                 .alert.alert-danger.hidden
                     span#errorInfo
@@ -34,12 +34,12 @@ block content
                         .input-group.input-group-lg
                             span.input-group-addon
                                 span.glyphicon.glyphicon-user
-                            input.form-control#username(type="text", placeholder="First name, last name", size="50")
+                            input.form-control#username(type="text", placeholder="Username", size="50")
                             span.input-group-btn
-                                button#play.btn.btn-primary Play
+                                button#play.btn.btn-primary Create
             if users.length > 0
                 .panel-heading
-                    h1.panel-title or choose one of the users already played!
+                    h1.panel-title= addUserMsgCnt
                 .panel-body
 
                     //- Calculate records to show/hide

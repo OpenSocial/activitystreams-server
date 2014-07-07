@@ -55,7 +55,8 @@ var viewsRenderer = {
                         usersToShow: 18,
                         usersPerLine: 6,
                         path: path,
-                        welcomeMessage: "Please, introduce yourself..."
+                        addUserMsg: "Interact with an Activity Streams 2.0 server by entering a username below...",
+                        addUserMsgCnt: "or Select an existing one!"
                     }
                 );
             } else {
