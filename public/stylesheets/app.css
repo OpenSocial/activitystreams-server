@@ -44,24 +44,17 @@ body {
 
 }
 
-.navbar-brand {
-    padding: 5px;
+.navbar p.navbar-text {
+    color: white;
+    padding-right: 10px;
 }
 
-#footer {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    height: 25px;
+.navbar-brand {
+    padding: 5px;
 }
 
 /* Custom page CSS
 -------------------------------------------------- */
 body > .container {
     padding: 60px 15px 0;
-}
-
-#footer > .small {
-    padding-right: 15px;
-    padding-left: 15px;
 }
